@@ -1,0 +1,2135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Speak Up · 영어 회화 학습 v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0e17;
+    --bg-soft: #1a1925;
+    --bg-card: #232133;
+    --border: #2e2c40;
+    --text: #fffffe;
+    --text-soft: #a7a9be;
+    --text-muted: #6b6d80;
+    --accent: #ff8906;
+    --accent-soft: #ffaa3b;
+    --secondary: #e53170;
+    --tertiary: #f25f4c;
+    --success: #2cb67d;
+    --info: #7f5af0;
+    --shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { overflow-x: hidden; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 80px;
+    background-image: 
+      radial-gradient(at 20% 0%, rgba(127, 90, 240, 0.15) 0px, transparent 50%),
+      radial-gradient(at 80% 100%, rgba(255, 137, 6, 0.1) 0px, transparent 50%);
+  }
+  .display { font-family: 'Fraunces', serif; font-weight: 800; letter-spacing: -0.02em; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  header {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(15, 14, 23, 0.85);
+    backdrop-filter: blur(20px);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-row { display: flex; justify-content: space-between; align-items: center; }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-mark {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--accent), var(--secondary));
+    border-radius: 8px;
+    display: grid; place-items: center;
+    font-family: 'Fraunces', serif; font-weight: 800; font-size: 18px;
+    color: var(--bg);
+    transform: rotate(-3deg);
+  }
+  .logo-text { font-family: 'Fraunces', serif; font-weight: 800; font-size: 19px; letter-spacing: -0.02em; }
+  .streak {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(255,137,6,0.12);
+    border: 1px solid rgba(255,137,6,0.3);
+    color: var(--accent-soft);
+    padding: 6px 12px; border-radius: 100px;
+    font-size: 13px; font-weight: 600;
+  }
+
+  nav.tabs {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    background: var(--bg-soft);
+    border-top: 1px solid var(--border);
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+    backdrop-filter: blur(20px);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .tab {
+    background: none; border: none; color: var(--text-muted);
+    padding: 12px 2px 14px;
+    font-family: inherit; font-size: 10px; font-weight: 600;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    cursor: pointer; transition: color 0.2s;
+    position: relative;
+  }
+  .tab.active { color: var(--accent); }
+  .tab.active::before {
+    content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 28px; height: 3px; background: var(--accent); border-radius: 0 0 3px 3px;
+  }
+  .tab-icon { font-size: 19px; }
+
+  main { padding: 20px; max-width: 720px; margin: 0 auto; }
+  .view { display: none; animation: fadeIn 0.3s ease; }
+  .view.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .hero {
+    background: linear-gradient(135deg, rgba(127,90,240,0.15), rgba(229,49,112,0.08));
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 24px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: ''; position: absolute; bottom: -40px; right: -40px;
+    width: 180px; height: 180px;
+    background: radial-gradient(circle, rgba(255,137,6,0.2), transparent 70%);
+    border-radius: 50%;
+  }
+  .hero-greeting { color: var(--text-soft); font-size: 14px; margin-bottom: 6px; }
+  .hero-title { font-family: 'Fraunces', serif; font-weight: 800; font-size: 30px; line-height: 1.1; margin-bottom: 6px; }
+  .hero-sub { color: var(--text-soft); font-size: 14px; margin-bottom: 18px; }
+  .hero-progress {
+    background: rgba(0,0,0,0.3); border-radius: 100px; height: 8px; overflow: hidden; margin-bottom: 8px;
+  }
+  .hero-progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--accent), var(--secondary));
+    border-radius: 100px; transition: width 0.6s ease;
+  }
+  .hero-stats { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-soft); }
+
+  .section-title {
+    font-family: 'Fraunces', serif; font-weight: 600; font-size: 13px;
+    color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;
+    margin: 24px 0 12px;
+  }
+
+  /* Daily mission card */
+  .mission-card {
+    background: linear-gradient(135deg, var(--info), var(--secondary));
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .mission-card::before {
+    content: '⭐'; position: absolute; right: 16px; top: 16px;
+    font-size: 40px; opacity: 0.3;
+  }
+  .mission-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; opacity: 0.9; margin-bottom: 6px; }
+  .mission-title { font-family: 'Fraunces', serif; font-weight: 700; font-size: 20px; margin-bottom: 8px; }
+  .mission-desc { font-size: 13px; opacity: 0.9; }
+  .mission-progress {
+    margin-top: 14px;
+    background: rgba(255,255,255,0.2); border-radius: 100px; height: 6px; overflow: hidden;
+  }
+  .mission-progress-fill { height: 100%; background: white; border-radius: 100px; transition: width 0.5s; }
+
+  .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .quick-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 16px;
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+    text-align: left;
+    color: inherit;
+    font-family: inherit;
+  }
+  .quick-card:active { transform: scale(0.97); border-color: var(--accent); }
+  .quick-icon { font-size: 28px; margin-bottom: 10px; display: block; }
+  .quick-label { font-weight: 600; font-size: 15px; margin-bottom: 2px; }
+  .quick-desc { color: var(--text-muted); font-size: 12px; }
+
+  .day-list { display: flex; flex-direction: column; gap: 10px; }
+  .day-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    display: flex; align-items: center; gap: 14px;
+    cursor: pointer; transition: border-color 0.2s, transform 0.15s;
+  }
+  .day-card:active { transform: scale(0.98); }
+  .day-card.completed { background: rgba(44, 182, 125, 0.06); border-color: rgba(44,182,125,0.3); }
+  .day-card.current { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .day-num {
+    width: 44px; height: 44px; flex-shrink: 0;
+    background: var(--bg-soft);
+    border-radius: 12px;
+    display: grid; place-items: center;
+    font-family: 'Fraunces', serif; font-weight: 800; font-size: 20px;
+  }
+  .day-card.completed .day-num { background: var(--success); color: var(--bg); }
+  .day-card.current .day-num { background: var(--accent); color: var(--bg); }
+  .day-info { flex: 1; min-width: 0; }
+  .day-title { font-weight: 600; font-size: 15px; margin-bottom: 2px; }
+  .day-desc { color: var(--text-muted); font-size: 12.5px; }
+  .day-status { color: var(--text-muted); font-size: 20px; }
+
+  .category-pills { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 16px; scrollbar-width: none; }
+  .category-pills::-webkit-scrollbar { display: none; }
+  .pill {
+    background: var(--bg-card); border: 1px solid var(--border);
+    color: var(--text-soft);
+    padding: 8px 16px; border-radius: 100px;
+    font-size: 13px; font-weight: 500;
+    white-space: nowrap; cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .pill.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+
+  .phrase-list { display: flex; flex-direction: column; gap: 10px; }
+  .phrase-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    transition: border-color 0.2s;
+  }
+  .phrase-card.mastered { border-color: rgba(44,182,125,0.4); background: rgba(44,182,125,0.05); }
+  .phrase-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .phrase-eng {
+    font-family: 'Fraunces', serif; font-weight: 600; font-size: 19px;
+    color: var(--text); margin-bottom: 4px; line-height: 1.3;
+  }
+  .phrase-kor { color: var(--text-soft); font-size: 14px; margin-bottom: 12px; }
+  .phrase-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .action-btn {
+    background: var(--bg-soft); border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 14px; border-radius: 10px;
+    font-size: 13px; font-weight: 500;
+    font-family: inherit; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: all 0.15s;
+  }
+  .action-btn:active { transform: scale(0.96); }
+  .action-btn.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+  .action-btn.recording { background: var(--secondary); border-color: var(--secondary); color: white; animation: pulse 1.2s infinite; }
+  .action-btn.master { margin-left: auto; }
+  .action-btn.master.mastered { background: var(--success); border-color: var(--success); color: var(--bg); }
+  .action-btn.big { padding: 14px 20px; font-size: 15px; font-weight: 600; }
+  .action-btn.wide { width: 100%; justify-content: center; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.65; } }
+
+  .score-badge {
+    display: inline-block;
+    padding: 4px 10px; border-radius: 100px;
+    font-size: 12px; font-weight: 600;
+    margin-top: 8px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .score-badge.high { background: rgba(44,182,125,0.2); color: var(--success); }
+  .score-badge.mid { background: rgba(255,137,6,0.2); color: var(--accent); }
+  .score-badge.low { background: rgba(229,49,112,0.2); color: var(--secondary); }
+
+  /* TRAIN tab */
+  .train-modes { display: grid; gap: 12px; }
+  .train-mode-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 18px; padding: 18px;
+    cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .train-mode-card:active { transform: scale(0.98); border-color: var(--accent); }
+  .train-mode-icon {
+    width: 56px; height: 56px; flex-shrink: 0;
+    border-radius: 14px;
+    display: grid; place-items: center;
+    font-size: 26px;
+  }
+  .icon-quiz { background: linear-gradient(135deg, var(--info), #5e3fc7); }
+  .icon-dictation { background: linear-gradient(135deg, var(--accent), var(--tertiary)); }
+  .icon-flashcard { background: linear-gradient(135deg, var(--success), #1e8a5e); }
+  .icon-dialog { background: linear-gradient(135deg, var(--secondary), #b8225a); }
+  .icon-shadowing { background: linear-gradient(135deg, #4a90e2, var(--info)); }
+  .icon-fill { background: linear-gradient(135deg, #f59e0b, var(--accent)); }
+  .train-mode-info { flex: 1; min-width: 0; }
+  .train-mode-title { font-weight: 600; font-size: 16px; margin-bottom: 3px; }
+  .train-mode-desc { color: var(--text-muted); font-size: 12.5px; line-height: 1.4; }
+  .train-mode-arrow { color: var(--text-muted); font-size: 20px; }
+
+  /* Training session screen */
+  .train-session {
+    min-height: calc(100vh - 200px);
+    display: flex; flex-direction: column;
+  }
+  .train-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 20px;
+  }
+  .train-back {
+    background: var(--bg-card); border: 1px solid var(--border);
+    color: var(--text); padding: 8px 14px; border-radius: 10px;
+    font-family: inherit; font-size: 13px; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .train-progress-text { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-muted); }
+  .train-bar {
+    background: var(--bg-card); border-radius: 100px; height: 6px;
+    overflow: hidden; margin-bottom: 28px;
+  }
+  .train-bar-fill {
+    height: 100%; background: linear-gradient(90deg, var(--accent), var(--secondary));
+    border-radius: 100px; transition: width 0.4s;
+  }
+  .train-question {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .train-prompt-label {
+    font-size: 11px; color: var(--text-muted); text-transform: uppercase;
+    letter-spacing: 0.1em; margin-bottom: 12px;
+  }
+  .train-prompt {
+    font-family: 'Fraunces', serif; font-weight: 600;
+    font-size: 24px; line-height: 1.3; margin-bottom: 16px;
+  }
+  .train-hint { color: var(--text-soft); font-size: 14px; margin-top: 8px; }
+  .train-options { display: flex; flex-direction: column; gap: 10px; }
+  .train-option {
+    background: var(--bg-card); border: 2px solid var(--border);
+    color: var(--text); padding: 16px;
+    border-radius: 14px; cursor: pointer; font-family: inherit;
+    font-size: 15px; text-align: left;
+    transition: all 0.15s;
+  }
+  .train-option:active { transform: scale(0.98); }
+  .train-option.selected { border-color: var(--accent); }
+  .train-option.correct { border-color: var(--success); background: rgba(44,182,125,0.1); }
+  .train-option.wrong { border-color: var(--secondary); background: rgba(229,49,112,0.1); }
+
+  .train-input {
+    width: 100%; background: var(--bg-card); border: 2px solid var(--border);
+    color: var(--text); padding: 16px;
+    border-radius: 14px; font-family: inherit; font-size: 16px;
+    outline: none;
+    margin-bottom: 16px;
+  }
+  .train-input:focus { border-color: var(--accent); }
+
+  .train-feedback {
+    padding: 16px; border-radius: 14px;
+    margin-bottom: 16px; text-align: center;
+  }
+  .train-feedback.correct { background: rgba(44,182,125,0.15); border: 1px solid var(--success); }
+  .train-feedback.wrong { background: rgba(229,49,112,0.15); border: 1px solid var(--secondary); }
+  .train-feedback-emoji { font-size: 36px; margin-bottom: 8px; }
+  .train-feedback-msg { font-family: 'Fraunces', serif; font-weight: 700; font-size: 20px; margin-bottom: 6px; }
+  .train-feedback-answer { color: var(--text-soft); font-size: 14px; }
+
+  /* Flashcard */
+  .flashcard {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 40px 24px;
+    min-height: 240px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center; cursor: pointer;
+    margin-bottom: 20px;
+    transition: transform 0.3s;
+    user-select: none;
+  }
+  .flashcard.flipping { transform: rotateY(180deg); }
+  .flashcard-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; }
+  .flashcard-text { font-family: 'Fraunces', serif; font-weight: 700; font-size: 26px; line-height: 1.3; margin-bottom: 8px; }
+  .flashcard-sub { color: var(--text-soft); font-size: 14px; }
+  .flashcard-hint { color: var(--text-muted); font-size: 12px; margin-top: 24px; }
+  .flashcard-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* Dictation */
+  .dictation-audio {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 30px; text-align: center;
+    margin-bottom: 20px;
+  }
+  .play-btn {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--secondary));
+    border: none; color: var(--bg);
+    font-size: 32px; cursor: pointer;
+    display: grid; place-items: center;
+    margin: 0 auto 16px;
+    transition: transform 0.15s;
+    box-shadow: 0 8px 24px rgba(255,137,6,0.3);
+  }
+  .play-btn:active { transform: scale(0.92); }
+  .speed-controls { display: flex; gap: 8px; justify-content: center; margin-top: 12px; }
+
+  /* Chat */
+  .chat-header {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 14px 16px;
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .chat-avatar {
+    width: 40px; height: 40px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--info), var(--secondary));
+    border-radius: 12px;
+    display: grid; place-items: center;
+    font-size: 20px;
+  }
+  .chat-name { font-weight: 600; font-size: 15px; }
+  .chat-status { color: var(--success); font-size: 12px; display: flex; align-items: center; gap: 5px; }
+  .status-dot { width: 6px; height: 6px; background: var(--success); border-radius: 50%; }
+
+  .chat-messages {
+    display: flex; flex-direction: column; gap: 12px;
+    min-height: 300px;
+    margin-bottom: 16px;
+  }
+  .msg { max-width: 85%; padding: 12px 16px; border-radius: 18px; font-size: 14.5px; line-height: 1.5; word-wrap: break-word; }
+  .msg.ai { background: var(--bg-card); border: 1px solid var(--border); align-self: flex-start; border-bottom-left-radius: 6px; }
+  .msg.user { background: var(--accent); color: var(--bg); align-self: flex-end; border-bottom-right-radius: 6px; font-weight: 500; }
+  .msg-translation {
+    color: var(--text-muted); font-size: 12px;
+    margin-top: 6px; padding-top: 6px;
+    border-top: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .msg.user .msg-translation { border-top-color: rgba(0,0,0,0.2); color: rgba(0,0,0,0.7); }
+  .msg-actions { display: flex; gap: 6px; margin-top: 8px; }
+  .msg-mini-btn {
+    background: rgba(255,255,255,0.05); border: none;
+    color: var(--text-soft); font-size: 11px;
+    padding: 4px 8px; border-radius: 6px; cursor: pointer;
+    font-family: inherit;
+  }
+  .msg.user .msg-mini-btn { background: rgba(0,0,0,0.15); color: rgba(0,0,0,0.7); }
+  .msg-loading { display: inline-flex; gap: 4px; }
+  .msg-loading span {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--text-soft);
+    animation: bounce 1.4s infinite ease-in-out;
+  }
+  .msg-loading span:nth-child(2) { animation-delay: 0.16s; }
+  .msg-loading span:nth-child(3) { animation-delay: 0.32s; }
+  @keyframes bounce { 0%, 80%, 100% { transform: scale(0.5); opacity: 0.5; } 40% { transform: scale(1); opacity: 1; } }
+
+  .chat-input-wrap {
+    display: flex; gap: 8px; align-items: flex-end;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 8px;
+    position: sticky; bottom: 76px;
+  }
+  .chat-input {
+    flex: 1; background: none; border: none; outline: none;
+    color: var(--text); font-family: inherit; font-size: 15px;
+    padding: 8px 8px; resize: none; max-height: 100px;
+  }
+  .chat-input::placeholder { color: var(--text-muted); }
+  .chat-btn {
+    flex-shrink: 0; width: 40px; height: 40px;
+    border: none; border-radius: 12px;
+    background: var(--bg-soft); color: var(--text);
+    font-size: 18px; cursor: pointer;
+    display: grid; place-items: center;
+    transition: all 0.15s;
+  }
+  .chat-btn.send { background: var(--accent); color: var(--bg); }
+  .chat-btn.recording { background: var(--secondary); color: white; animation: pulse 1.2s infinite; }
+  .chat-btn:active { transform: scale(0.93); }
+
+  .topic-suggestions { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 12px; scrollbar-width: none; }
+  .topic-suggestions::-webkit-scrollbar { display: none; }
+  .topic-pill {
+    background: var(--bg-soft); border: 1px solid var(--border);
+    color: var(--text-soft); padding: 6px 12px; border-radius: 100px;
+    font-size: 12px; white-space: nowrap; cursor: pointer;
+    font-family: inherit;
+  }
+  .scenario-pills { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 12px; scrollbar-width: none; }
+  .scenario-pills::-webkit-scrollbar { display: none; }
+  .scenario-pill {
+    background: linear-gradient(135deg, var(--info), var(--secondary));
+    color: white; padding: 6px 12px; border-radius: 100px;
+    font-size: 12px; white-space: nowrap; cursor: pointer;
+    border: none; font-family: inherit; font-weight: 500;
+  }
+
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .stat-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 18px;
+  }
+  .stat-icon { font-size: 22px; margin-bottom: 8px; }
+  .stat-value {
+    font-family: 'Fraunces', serif; font-weight: 800; font-size: 30px;
+    line-height: 1; margin-bottom: 4px;
+  }
+  .stat-label { color: var(--text-muted); font-size: 12px; font-weight: 500; }
+
+  .achievement-list { display: flex; flex-direction: column; gap: 10px; }
+  .achievement {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 14px;
+  }
+  .achievement.locked { opacity: 0.5; }
+  .achievement-icon {
+    width: 44px; height: 44px;
+    background: var(--bg-soft); border-radius: 12px;
+    display: grid; place-items: center; font-size: 22px;
+    flex-shrink: 0;
+  }
+  .achievement.unlocked .achievement-icon { background: linear-gradient(135deg, var(--accent), var(--secondary)); }
+  .achievement-title { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+  .achievement-desc { color: var(--text-muted); font-size: 12px; }
+
+  .modal-bg {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    display: none; align-items: center; justify-content: center;
+    z-index: 200; padding: 20px;
+  }
+  .modal-bg.active { display: flex; }
+  .modal {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 24px; padding: 24px;
+    max-width: 400px; width: 100%; max-height: 80vh; overflow-y: auto;
+  }
+  .modal-title { font-family: 'Fraunces', serif; font-weight: 800; font-size: 22px; margin-bottom: 12px; }
+  .modal-close {
+    background: var(--bg-soft); border: none; color: var(--text);
+    padding: 10px; border-radius: 10px; cursor: pointer; font-family: inherit;
+    width: 100%; margin-top: 16px; font-weight: 600;
+  }
+
+  .dialog-item {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 16px; margin-bottom: 12px;
+  }
+  .dialog-title { font-family: 'Fraunces', serif; font-weight: 600; font-size: 17px; margin-bottom: 4px; }
+  .dialog-meta { color: var(--text-muted); font-size: 12px; margin-bottom: 12px; }
+  .dialog-line { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .dialog-line:last-child { border-bottom: none; }
+  .dialog-speaker { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); flex-shrink: 0; padding-top: 2px; min-width: 28px; }
+  .dialog-content { flex: 1; min-width: 0; }
+  .dialog-eng { font-weight: 500; font-size: 15px; margin-bottom: 2px; }
+  .dialog-kor { color: var(--text-muted); font-size: 12.5px; }
+  .dialog-play {
+    background: var(--bg-soft); border: 1px solid var(--border);
+    color: var(--text); border-radius: 8px;
+    width: 32px; height: 32px; flex-shrink: 0; cursor: pointer;
+    display: grid; place-items: center; font-size: 14px;
+  }
+
+  .empty-state {
+    text-align: center; padding: 40px 20px; color: var(--text-muted);
+  }
+  .empty-state-icon { font-size: 48px; margin-bottom: 12px; }
+
+  .completion-modal { text-align: center; }
+  .completion-emoji { font-size: 72px; margin-bottom: 16px; }
+  .completion-title { font-family: 'Fraunces', serif; font-weight: 800; font-size: 28px; margin-bottom: 8px; }
+  .completion-stats { background: var(--bg-soft); border-radius: 14px; padding: 16px; margin: 16px 0; }
+  .completion-stat-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-row">
+    <div class="logo">
+      <div class="logo-mark">S</div>
+      <div class="logo-text">Speak Up</div>
+    </div>
+    <div class="streak">
+      🔥 <span id="streakCount">0</span>일 연속
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- HOME -->
+  <section class="view active" id="view-home">
+    <div class="hero">
+      <div class="hero-greeting">안녕하세요 👋</div>
+      <div class="hero-title">오늘도 한 걸음씩</div>
+      <div class="hero-sub" id="todaySubtitle">Day 1 · 인사 & 자기소개</div>
+      <div class="hero-progress"><div class="hero-progress-fill" id="weekProgressFill" style="width: 0%"></div></div>
+      <div class="hero-stats">
+        <span id="weekProgressText">0 / 100 표현 마스터</span>
+        <span id="weekDay">Day 1 / 14</span>
+      </div>
+    </div>
+
+    <div class="mission-card" id="dailyMission" onclick="startDailyMission()">
+      <div class="mission-label">🎯 오늘의 미션</div>
+      <div class="mission-title" id="missionTitle">로딩 중...</div>
+      <div class="mission-desc" id="missionDesc"></div>
+      <div class="mission-progress"><div class="mission-progress-fill" id="missionProgress" style="width: 0%"></div></div>
+    </div>
+
+    <div class="section-title">바로 시작하기</div>
+    <div class="quick-grid">
+      <button class="quick-card" onclick="switchView('phrases')">
+        <span class="quick-icon">📚</span>
+        <div class="quick-label">표현 학습</div>
+        <div class="quick-desc">100개 핵심 표현</div>
+      </button>
+      <button class="quick-card" onclick="switchView('train')">
+        <span class="quick-icon">🎯</span>
+        <div class="quick-label">집중 훈련</div>
+        <div class="quick-desc">퀴즈·받아쓰기·플래시카드</div>
+      </button>
+      <button class="quick-card" onclick="switchView('chat')">
+        <span class="quick-icon">💬</span>
+        <div class="quick-label">AI와 대화</div>
+        <div class="quick-desc">초급 수준 회화</div>
+      </button>
+      <button class="quick-card" onclick="openDialogModal()">
+        <span class="quick-icon">🎬</span>
+        <div class="quick-label">상황 다이얼로그</div>
+        <div class="quick-desc">10가지 시나리오</div>
+      </button>
+    </div>
+
+    <div class="section-title">14일 학습 플랜</div>
+    <div class="day-list" id="dayList"></div>
+  </section>
+
+  <!-- PHRASES -->
+  <section class="view" id="view-phrases">
+    <div class="category-pills" id="categoryPills"></div>
+    <div class="phrase-list" id="phraseList"></div>
+  </section>
+
+  <!-- TRAIN -->
+  <section class="view" id="view-train">
+    <div id="trainHome">
+      <div class="section-title">훈련 모드</div>
+      <div class="train-modes">
+        <button class="train-mode-card" onclick="startTraining('quiz')">
+          <div class="train-mode-icon icon-quiz">🧠</div>
+          <div class="train-mode-info">
+            <div class="train-mode-title">의미 퀴즈</div>
+            <div class="train-mode-desc">한국어를 보고 영어 표현 고르기 · 10문제</div>
+          </div>
+          <div class="train-mode-arrow">›</div>
+        </button>
+        <button class="train-mode-card" onclick="startTraining('reverse')">
+          <div class="train-mode-icon icon-quiz">🔄</div>
+          <div class="train-mode-info">
+            <div class="train-mode-title">역방향 퀴즈</div>
+            <div class="train-mode-desc">영어를 보고 한국어 뜻 고르기 · 10문제</div>
+          </div>
+          <div class="train-mode-arrow">›</div>
+        </button>
+        <button class="train-mode-card" onclick="startTraining('dictation')">
+          <div class="train-mode-icon icon-dictation">✏️</div>
+          <div class="train-mode-info">
+            <div class="train-mode-title">받아쓰기</div>
+            <div class="train-mode-desc">영어 듣고 받아쓰기 · 5문제</div>
+          </div>
+          <div class="train-mode-arrow">›</div>
+        </button>
+        <button class="train-mode-card" onclick="startTraining('fillblank')">
+          <div class="train-mode-icon icon-fill">🔤</div>
+          <div class="train-mode-info">
+            <div class="train-mode-title">빈칸 채우기</div>
+            <div class="train-mode-desc">문장의 빈칸에 알맞은 단어 · 8문제</div>
+          </div>
+          <div class="train-mode-arrow">›</div>
+        </button>
+        <button class="train-mode-card" onclick="startTraining('flashcard')">
+          <div class="train-mode-icon icon-flashcard">🎴</div>
+          <div class="train-mode-info">
+            <div class="train-mode-title">플래시카드</div>
+            <div class="train-mode-desc">표현 빠르게 복습 · 무한 모드</div>
+          </div>
+          <div class="train-mode-arrow">›</div>
+        </button>
+        <button class="train-mode-card" onclick="startTraining('shadowing')">
+          <div class="train-mode-icon icon-shadowing">🎤</div>
+          <div class="train-mode-info">
+            <div class="train-mode-title">쉐도잉 챌린지</div>
+            <div class="train-mode-desc">듣고 0.5초 뒤 따라 말하기 · 5문제</div>
+          </div>
+          <div class="train-mode-arrow">›</div>
+        </button>
+      </div>
+    </div>
+    <div id="trainSession" style="display:none"></div>
+  </section>
+
+  <!-- CHAT -->
+  <section class="view" id="view-chat">
+    <div class="chat-header">
+      <div class="chat-avatar">🤖</div>
+      <div style="flex: 1">
+        <div class="chat-name">Emma · AI 회화 파트너</div>
+        <div class="chat-status"><span class="status-dot"></span> 초급 수준 · 친절 모드</div>
+      </div>
+      <button class="chat-btn" onclick="resetChat()" title="대화 초기화">🔄</button>
+    </div>
+
+    <div class="scenario-pills">
+      <button class="scenario-pill" onclick="startScenario('cafe')">☕ 카페 주문</button>
+      <button class="scenario-pill" onclick="startScenario('airport')">✈️ 입국 심사</button>
+      <button class="scenario-pill" onclick="startScenario('hotel')">🏨 호텔 체크인</button>
+      <button class="scenario-pill" onclick="startScenario('restaurant')">🍽️ 식당 주문</button>
+      <button class="scenario-pill" onclick="startScenario('shop')">🛍️ 쇼핑하기</button>
+      <button class="scenario-pill" onclick="startScenario('directions')">🗺️ 길 묻기</button>
+    </div>
+
+    <div class="topic-suggestions" id="topicSuggestions">
+      <button class="topic-pill" onclick="useTopic('Let me introduce myself!')">자기소개</button>
+      <button class="topic-pill" onclick="useTopic('How was your day?')">스몰토크</button>
+      <button class="topic-pill" onclick="useTopic('I like Korean food.')">취미·음식</button>
+      <button class="topic-pill" onclick="useTopic('Tell me about your weekend!')">주말 얘기</button>
+      <button class="topic-pill" onclick="useTopic('What is your favorite movie?')">영화 얘기</button>
+    </div>
+
+    <div class="chat-messages" id="chatMessages"></div>
+
+    <div class="chat-input-wrap">
+      <textarea class="chat-input" id="chatInput" rows="1" placeholder="영어로 말해보세요... (한국어도 OK)"></textarea>
+      <button class="chat-btn" id="micBtn" onclick="toggleVoiceInput()" title="음성 입력">🎤</button>
+      <button class="chat-btn send" onclick="sendMessage()" title="전송">➤</button>
+    </div>
+  </section>
+
+  <!-- PROGRESS -->
+  <section class="view" id="view-progress">
+    <div class="section-title">학습 통계</div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">🔥</div>
+        <div class="stat-value" id="statStreak">0</div>
+        <div class="stat-label">연속 학습일</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-value" id="statMastered">0</div>
+        <div class="stat-label">마스터한 표현</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🎤</div>
+        <div class="stat-value" id="statPractice">0</div>
+        <div class="stat-label">발음 연습 횟수</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💬</div>
+        <div class="stat-value" id="statChats">0</div>
+        <div class="stat-label">AI 대화 수</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🧠</div>
+        <div class="stat-value" id="statQuiz">0</div>
+        <div class="stat-label">퀴즈 정답수</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⏱️</div>
+        <div class="stat-value" id="statDays">0</div>
+        <div class="stat-label">학습한 날</div>
+      </div>
+    </div>
+
+    <div class="section-title">배지 컬렉션</div>
+    <div class="achievement-list" id="achievementList"></div>
+
+    <div class="section-title" style="margin-top: 24px">설정</div>
+    <button class="action-btn wide" onclick="resetAllProgress()" style="padding: 14px; color: var(--secondary); border-color: var(--secondary);">
+      🗑️ 모든 진도 초기화
+    </button>
+  </section>
+</main>
+
+<nav class="tabs">
+  <button class="tab active" data-view="home" onclick="switchView('home')">
+    <span class="tab-icon">🏠</span><span>홈</span>
+  </button>
+  <button class="tab" data-view="phrases" onclick="switchView('phrases')">
+    <span class="tab-icon">📖</span><span>표현</span>
+  </button>
+  <button class="tab" data-view="train" onclick="switchView('train')">
+    <span class="tab-icon">🎯</span><span>훈련</span>
+  </button>
+  <button class="tab" data-view="chat" onclick="switchView('chat')">
+    <span class="tab-icon">💬</span><span>대화</span>
+  </button>
+  <button class="tab" data-view="progress" onclick="switchView('progress')">
+    <span class="tab-icon">📊</span><span>진도</span>
+  </button>
+</nav>
+
+<div class="modal-bg" id="dialogModal" onclick="if(event.target===this)closeDialogModal()">
+  <div class="modal">
+    <div class="modal-title">🎬 상황 다이얼로그</div>
+    <div id="dialogModalContent"></div>
+    <button class="modal-close" onclick="closeDialogModal()">닫기</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="pronModal" onclick="if(event.target===this)closePronModal()">
+  <div class="modal" style="text-align: center;">
+    <div id="pronModalContent"></div>
+    <button class="modal-close" onclick="closePronModal()">확인</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="completionModal" onclick="if(event.target===this)closeCompletionModal()">
+  <div class="modal completion-modal">
+    <div id="completionContent"></div>
+    <button class="modal-close" onclick="closeCompletionModal()">확인</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATA: 100 phrases across 10 categories
+// ============================================================
+const PHRASES = [
+  // 인사·자기소개 (1-10)
+  {id: 1, cat: '인사·자기소개', en: 'Hi, nice to meet you.', ko: '안녕하세요, 만나서 반가워요.'},
+  {id: 2, cat: '인사·자기소개', en: "I'm from Korea.", ko: '저는 한국에서 왔어요.'},
+  {id: 3, cat: '인사·자기소개', en: 'My name is Minsu.', ko: '제 이름은 민수입니다.'},
+  {id: 4, cat: '인사·자기소개', en: 'How about you?', ko: '당신은요?'},
+  {id: 5, cat: '인사·자기소개', en: 'What do you do?', ko: '무슨 일 하세요?'},
+  {id: 6, cat: '인사·자기소개', en: 'I work at a tech company.', ko: 'IT 회사에서 일해요.'},
+  {id: 7, cat: '인사·자기소개', en: 'How long have you been here?', ko: '여기 온 지 얼마나 됐어요?'},
+  {id: 8, cat: '인사·자기소개', en: "I've been here for two years.", ko: '여기 온 지 2년 됐어요.'},
+  {id: 9, cat: '인사·자기소개', en: 'Where do you live?', ko: '어디 사세요?'},
+  {id: 10, cat: '인사·자기소개', en: 'I live near here.', ko: '근처에 살아요.'},
+
+  // 스몰토크 (11-20)
+  {id: 11, cat: '스몰토크', en: "How's it going?", ko: '어떻게 지내요?'},
+  {id: 12, cat: '스몰토크', en: 'Pretty good, thanks.', ko: '잘 지내요, 고마워요.'},
+  {id: 13, cat: '스몰토크', en: 'What did you do today?', ko: '오늘 뭐 했어요?'},
+  {id: 14, cat: '스몰토크', en: "I'm a little tired.", ko: '조금 피곤해요.'},
+  {id: 15, cat: '스몰토크', en: "It's a beautiful day!", ko: '날씨 좋네요!'},
+  {id: 16, cat: '스몰토크', en: 'Do you have any plans?', ko: '무슨 계획 있어요?'},
+  {id: 17, cat: '스몰토크', en: 'How was your weekend?', ko: '주말 어땠어요?'},
+  {id: 18, cat: '스몰토크', en: 'Long time no see!', ko: '오랜만이에요!'},
+  {id: 19, cat: '스몰토크', en: "What's new?", ko: '뭐 새로운 거 있어요?'},
+  {id: 20, cat: '스몰토크', en: 'Not much, just busy.', ko: '별일 없어요, 그냥 바빠요.'},
+
+  // 카페·음식 (21-30)
+  {id: 21, cat: '카페·음식', en: "I'd like a latte, please.", ko: '라떼 한 잔 주세요.'},
+  {id: 22, cat: '카페·음식', en: 'For here or to go?', ko: '여기서 드실 거예요, 가져가실 거예요?'},
+  {id: 23, cat: '카페·음식', en: 'To go, please.', ko: '가져갈게요.'},
+  {id: 24, cat: '카페·음식', en: "Could I have the menu, please?", ko: '메뉴 좀 주실래요?'},
+  {id: 25, cat: '카페·음식', en: 'What do you recommend?', ko: '뭐가 맛있어요?'},
+  {id: 26, cat: '카페·음식', en: "I'll have the same.", ko: '저도 같은 걸로요.'},
+  {id: 27, cat: '카페·음식', en: 'Can I get the check, please?', ko: '계산서 좀 주세요.'},
+  {id: 28, cat: '카페·음식', en: 'Is this spicy?', ko: '이거 매워요?'},
+  {id: 29, cat: '카페·음식', en: 'No onions, please.', ko: '양파는 빼주세요.'},
+  {id: 30, cat: '카페·음식', en: 'It was delicious!', ko: '정말 맛있었어요!'},
+
+  // 쇼핑 (31-40)
+  {id: 31, cat: '쇼핑', en: 'How much is this?', ko: '이거 얼마예요?'},
+  {id: 32, cat: '쇼핑', en: 'Do you have this in blue?', ko: '이거 파란색 있어요?'},
+  {id: 33, cat: '쇼핑', en: 'Can I try this on?', ko: '입어봐도 돼요?'},
+  {id: 34, cat: '쇼핑', en: "It's too expensive.", ko: '너무 비싸요.'},
+  {id: 35, cat: '쇼핑', en: "I'll take it.", ko: '이걸로 살게요.'},
+  {id: 36, cat: '쇼핑', en: "I'm just looking, thanks.", ko: '그냥 구경 중이에요, 감사해요.'},
+  {id: 37, cat: '쇼핑', en: 'Do you accept cards?', ko: '카드 받아요?'},
+  {id: 38, cat: '쇼핑', en: 'Can I get a receipt?', ko: '영수증 주실래요?'},
+  {id: 39, cat: '쇼핑', en: 'Where is the fitting room?', ko: '탈의실 어디예요?'},
+  {id: 40, cat: '쇼핑', en: 'Is this on sale?', ko: '이거 세일 중이에요?'},
+
+  // 여행·교통 (41-50)
+  {id: 41, cat: '여행·교통', en: 'Excuse me, where is the bathroom?', ko: '실례합니다, 화장실 어디예요?'},
+  {id: 42, cat: '여행·교통', en: 'How do I get to the airport?', ko: '공항에 어떻게 가요?'},
+  {id: 43, cat: '여행·교통', en: 'Could you say that again?', ko: '다시 말씀해 주실래요?'},
+  {id: 44, cat: '여행·교통', en: "I don't understand.", ko: '이해가 안 돼요.'},
+  {id: 45, cat: '여행·교통', en: 'Please speak slowly.', ko: '천천히 말해주세요.'},
+  {id: 46, cat: '여행·교통', en: 'One ticket to Seoul, please.', ko: '서울행 한 장 주세요.'},
+  {id: 47, cat: '여행·교통', en: 'What time does it leave?', ko: '몇 시에 출발해요?'},
+  {id: 48, cat: '여행·교통', en: "I'd like to check in.", ko: '체크인 하고 싶어요.'},
+  {id: 49, cat: '여행·교통', en: 'How long does it take?', ko: '얼마나 걸려요?'},
+  {id: 50, cat: '여행·교통', en: "Is this seat taken?", ko: '여기 자리 있어요?'},
+
+  // 감정·의견 (51-60)
+  {id: 51, cat: '감정·의견', en: 'I love it!', ko: '정말 좋아요!'},
+  {id: 52, cat: '감정·의견', en: 'That sounds great.', ko: '좋은데요.'},
+  {id: 53, cat: '감정·의견', en: "I'm not sure.", ko: '잘 모르겠어요.'},
+  {id: 54, cat: '감정·의견', en: "Really? That's interesting.", ko: '정말요? 흥미롭네요.'},
+  {id: 55, cat: '감정·의견', en: 'I think so too.', ko: '저도 그렇게 생각해요.'},
+  {id: 56, cat: '감정·의견', en: 'Maybe next time.', ko: '다음에요.'},
+  {id: 57, cat: '감정·의견', en: "I'm so happy for you!", ko: '정말 잘됐네요!'},
+  {id: 58, cat: '감정·의견', en: "That's too bad.", ko: '안타깝네요.'},
+  {id: 59, cat: '감정·의견', en: "I don't think so.", ko: '그건 아닌 것 같아요.'},
+  {id: 60, cat: '감정·의견', en: "It's up to you.", ko: '당신이 결정해요.'},
+
+  // 도움·요청 (61-70)
+  {id: 61, cat: '도움·요청', en: 'Can you help me?', ko: '좀 도와주실래요?'},
+  {id: 62, cat: '도움·요청', en: 'Could you do me a favor?', ko: '부탁 하나 들어주실래요?'},
+  {id: 63, cat: '도움·요청', en: 'Sure, no problem.', ko: '네, 그럼요.'},
+  {id: 64, cat: '도움·요청', en: 'Sorry, I can\'t right now.', ko: '죄송해요, 지금은 안 돼요.'},
+  {id: 65, cat: '도움·요청', en: "Thanks for your help.", ko: '도와주셔서 감사해요.'},
+  {id: 66, cat: '도움·요청', en: 'No worries.', ko: '괜찮아요.'},
+  {id: 67, cat: '도움·요청', en: 'Excuse me, do you have a minute?', ko: '실례지만 잠깐 시간 있으세요?'},
+  {id: 68, cat: '도움·요청', en: 'Can I ask you something?', ko: '뭐 하나 물어봐도 돼요?'},
+  {id: 69, cat: '도움·요청', en: "I appreciate it.", ko: '감사하게 생각해요.'},
+  {id: 70, cat: '도움·요청', en: "It's my pleasure.", ko: '제가 좋아서 한 일이에요.'},
+
+  // 약속·시간 (71-80)
+  {id: 71, cat: '약속·시간', en: 'What time is it?', ko: '몇 시예요?'},
+  {id: 72, cat: '약속·시간', en: "Are you free tonight?", ko: '오늘 밤 시간 있어요?'},
+  {id: 73, cat: '약속·시간', en: "Let's meet at 7.", ko: '7시에 만나요.'},
+  {id: 74, cat: '약속·시간', en: 'I might be a little late.', ko: '조금 늦을 수도 있어요.'},
+  {id: 75, cat: '약속·시간', en: "I'm on my way.", ko: '지금 가는 중이에요.'},
+  {id: 76, cat: '약속·시간', en: 'Sorry, I have plans.', ko: '미안해요, 약속 있어요.'},
+  {id: 77, cat: '약속·시간', en: "Can we reschedule?", ko: '약속 다시 잡을 수 있을까요?'},
+  {id: 78, cat: '약속·시간', en: 'Sounds good to me.', ko: '저는 좋아요.'},
+  {id: 79, cat: '약속·시간', en: "I'll see you then.", ko: '그때 봐요.'},
+  {id: 80, cat: '약속·시간', en: 'What day works for you?', ko: '무슨 요일이 괜찮아요?'},
+
+  // 일상 표현 (81-90)
+  {id: 81, cat: '일상 표현', en: "I'm starving.", ko: '너무 배고파요.'},
+  {id: 82, cat: '일상 표현', en: "I'm exhausted.", ko: '완전 지쳤어요.'},
+  {id: 83, cat: '일상 표현', en: "I overslept.", ko: '늦잠 잤어요.'},
+  {id: 84, cat: '일상 표현', en: "I missed the bus.", ko: '버스 놓쳤어요.'},
+  {id: 85, cat: '일상 표현', en: "I'm running late.", ko: '늦을 것 같아요.'},
+  {id: 86, cat: '일상 표현', en: "Let me think about it.", ko: '생각 좀 해볼게요.'},
+  {id: 87, cat: '일상 표현', en: "I'll let you know.", ko: '알려드릴게요.'},
+  {id: 88, cat: '일상 표현', en: "Same here.", ko: '저도 그래요.'},
+  {id: 89, cat: '일상 표현', en: "I have no idea.", ko: '전혀 모르겠어요.'},
+  {id: 90, cat: '일상 표현', en: "It depends.", ko: '상황에 따라 달라요.'},
+
+  // 작별·마무리 (91-100)
+  {id: 91, cat: '작별·마무리', en: 'It was nice talking to you.', ko: '대화 즐거웠어요.'},
+  {id: 92, cat: '작별·마무리', en: "Let's keep in touch.", ko: '연락하고 지내요.'},
+  {id: 93, cat: '작별·마무리', en: 'Have a nice day!', ko: '좋은 하루 보내세요!'},
+  {id: 94, cat: '작별·마무리', en: 'See you later.', ko: '또 봐요.'},
+  {id: 95, cat: '작별·마무리', en: 'Take care!', ko: '잘 지내요!'},
+  {id: 96, cat: '작별·마무리', en: 'Thanks for everything.', ko: '모든 것에 감사해요.'},
+  {id: 97, cat: '작별·마무리', en: 'Drive safely.', ko: '조심해서 가세요.'},
+  {id: 98, cat: '작별·마무리', en: "I'll text you later.", ko: '나중에 문자할게요.'},
+  {id: 99, cat: '작별·마무리', en: "Have a good one!", ko: '잘 지내세요!'},
+  {id: 100, cat: '작별·마무리', en: 'Talk to you soon.', ko: '곧 또 얘기해요.'}
+];
+
+const CATEGORIES = ['전체', '인사·자기소개', '스몰토크', '카페·음식', '쇼핑', '여행·교통', '감정·의견', '도움·요청', '약속·시간', '일상 표현', '작별·마무리'];
+
+const DAYS = [
+  {day: 1, title: '인사 & 자기소개 (1)', desc: '표현 1-5번', phraseIds: [1,2,3,4,5]},
+  {day: 2, title: '인사 & 자기소개 (2)', desc: '표현 6-10번', phraseIds: [6,7,8,9,10]},
+  {day: 3, title: '스몰토크 (1)', desc: '표현 11-15번', phraseIds: [11,12,13,14,15]},
+  {day: 4, title: '스몰토크 (2)', desc: '표현 16-20번', phraseIds: [16,17,18,19,20]},
+  {day: 5, title: '카페·음식 (1)', desc: '표현 21-25번', phraseIds: [21,22,23,24,25]},
+  {day: 6, title: '카페·음식 (2)', desc: '표현 26-30번', phraseIds: [26,27,28,29,30]},
+  {day: 7, title: '쇼핑 (1)', desc: '표현 31-35번', phraseIds: [31,32,33,34,35]},
+  {day: 8, title: '쇼핑 (2)', desc: '표현 36-40번', phraseIds: [36,37,38,39,40]},
+  {day: 9, title: '여행·교통 (1)', desc: '표현 41-45번', phraseIds: [41,42,43,44,45]},
+  {day: 10, title: '여행·교통 (2)', desc: '표현 46-50번', phraseIds: [46,47,48,49,50]},
+  {day: 11, title: '감정·의견', desc: '표현 51-60번', phraseIds: [51,52,53,54,55,56,57,58,59,60]},
+  {day: 12, title: '도움·요청', desc: '표현 61-70번', phraseIds: [61,62,63,64,65,66,67,68,69,70]},
+  {day: 13, title: '약속·시간 & 일상', desc: '표현 71-90번', phraseIds: [71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90]},
+  {day: 14, title: '작별 & 종합 복습', desc: '표현 91-100번', phraseIds: [91,92,93,94,95,96,97,98,99,100]}
+];
+
+const DIALOGS = [
+  {
+    title: '처음 만난 사람과',
+    meta: '난이도 ★☆☆ · 자기소개',
+    lines: [
+      {s: 'A', en: 'Hi! Nice to meet you. I\'m Minsu.', ko: '안녕하세요! 만나서 반가워요. 저는 민수예요.'},
+      {s: 'B', en: 'Nice to meet you too, Minsu. I\'m Sarah.', ko: '저도 반가워요, 민수씨. 저는 사라예요.'},
+      {s: 'A', en: 'Where are you from?', ko: '어디서 오셨어요?'},
+      {s: 'B', en: 'I\'m from Canada. How about you?', ko: '저는 캐나다에서 왔어요. 당신은요?'},
+      {s: 'A', en: 'I\'m from Korea. What do you do?', ko: '저는 한국에서 왔어요. 무슨 일 하세요?'},
+      {s: 'B', en: 'I work at a tech company.', ko: 'IT 회사에서 일해요.'}
+    ]
+  },
+  {
+    title: '카페에서 주문',
+    meta: '난이도 ★☆☆ · 일상',
+    lines: [
+      {s: 'A', en: 'Hi, I\'d like a latte, please.', ko: '안녕하세요, 라떼 한 잔 주세요.'},
+      {s: 'B', en: 'Sure. Hot or iced?', ko: '네. 따뜻한 거요, 차가운 거요?'},
+      {s: 'A', en: 'Iced, please. How much is it?', ko: '아이스로요. 얼마예요?'},
+      {s: 'B', en: 'That\'s 5 dollars. For here or to go?', ko: '5달러입니다. 여기서 드실 거예요, 가져가실 거예요?'},
+      {s: 'A', en: 'To go, please. Here you go.', ko: '가져갈게요. 여기 있어요.'},
+      {s: 'B', en: 'Thank you! Have a nice day.', ko: '감사합니다! 좋은 하루 보내세요.'}
+    ]
+  },
+  {
+    title: '식당 주문',
+    meta: '난이도 ★★☆ · 일상',
+    lines: [
+      {s: 'A', en: 'Could I have the menu, please?', ko: '메뉴 좀 주실래요?'},
+      {s: 'B', en: 'Here you go. Are you ready to order?', ko: '여기요. 주문하시겠어요?'},
+      {s: 'A', en: 'What do you recommend?', ko: '뭐가 맛있어요?'},
+      {s: 'B', en: 'The pasta is very popular.', ko: '파스타가 인기 많아요.'},
+      {s: 'A', en: 'Is it spicy?', ko: '매워요?'},
+      {s: 'B', en: 'Not really. Would you like to try it?', ko: '아니요. 드셔보시겠어요?'},
+      {s: 'A', en: 'Yes, please. And a glass of water.', ko: '네, 부탁해요. 물도 한 잔 주세요.'}
+    ]
+  },
+  {
+    title: '길 묻기',
+    meta: '난이도 ★☆☆ · 여행',
+    lines: [
+      {s: 'A', en: 'Excuse me, where is the subway station?', ko: '실례합니다, 지하철역이 어디에 있나요?'},
+      {s: 'B', en: 'Go straight, and turn left at the corner.', ko: '직진하시고, 모퉁이에서 왼쪽으로 도세요.'},
+      {s: 'A', en: 'Could you say that again, please?', ko: '다시 말씀해 주시겠어요?'},
+      {s: 'B', en: 'Sure. Straight, then left. About 5 minutes.', ko: '네. 직진, 그다음 왼쪽이요. 5분 정도 걸려요.'},
+      {s: 'A', en: 'Thank you so much!', ko: '정말 감사합니다!'}
+    ]
+  },
+  {
+    title: '호텔 체크인',
+    meta: '난이도 ★★☆ · 여행',
+    lines: [
+      {s: 'A', en: 'Hi, I\'d like to check in.', ko: '안녕하세요, 체크인 하려고요.'},
+      {s: 'B', en: 'Your name, please?', ko: '성함이 어떻게 되세요?'},
+      {s: 'A', en: 'Minsu Kim. I have a reservation.', ko: '김민수예요. 예약했어요.'},
+      {s: 'B', en: 'Yes, for two nights. Here is your key.', ko: '네, 2박이시네요. 키 여기 있습니다.'},
+      {s: 'A', en: 'What time is checkout?', ko: '체크아웃은 몇 시예요?'},
+      {s: 'B', en: 'Eleven AM. Enjoy your stay!', ko: '오전 11시입니다. 즐거운 시간 되세요!'}
+    ]
+  },
+  {
+    title: '쇼핑하기',
+    meta: '난이도 ★★☆ · 일상',
+    lines: [
+      {s: 'A', en: 'Can I help you?', ko: '도와드릴까요?'},
+      {s: 'B', en: 'I\'m just looking, thanks.', ko: '그냥 구경 중이에요, 감사해요.'},
+      {s: 'B', en: 'Actually, do you have this in blue?', ko: '아, 이거 파란색 있어요?'},
+      {s: 'A', en: 'Let me check. What size?', ko: '확인해볼게요. 사이즈는요?'},
+      {s: 'B', en: 'Medium. Can I try it on?', ko: '미디엄이요. 입어봐도 돼요?'},
+      {s: 'A', en: 'Of course. The fitting room is over there.', ko: '그럼요. 탈의실은 저쪽에 있어요.'}
+    ]
+  },
+  {
+    title: '약속 잡기',
+    meta: '난이도 ★★☆ · 일상',
+    lines: [
+      {s: 'A', en: 'Are you free this weekend?', ko: '이번 주말 시간 있어요?'},
+      {s: 'B', en: 'Saturday is good. Why?', ko: '토요일은 괜찮아요. 왜요?'},
+      {s: 'A', en: 'Want to grab lunch?', ko: '점심 같이 먹을래요?'},
+      {s: 'B', en: 'Sounds good! What time?', ko: '좋아요! 몇 시에요?'},
+      {s: 'A', en: 'How about noon at the new Italian place?', ko: '새로 생긴 이탈리안 식당에서 12시 어때요?'},
+      {s: 'B', en: 'Perfect. See you then!', ko: '좋아요. 그때 봐요!'}
+    ]
+  },
+  {
+    title: '입국 심사',
+    meta: '난이도 ★★★ · 여행',
+    lines: [
+      {s: '직원', en: 'Passport, please. What\'s the purpose of your visit?', ko: '여권 주세요. 방문 목적이 어떻게 되세요?'},
+      {s: '본인', en: 'Tourism. I\'m here for sightseeing.', ko: '관광이요. 구경하러 왔어요.'},
+      {s: '직원', en: 'How long are you staying?', ko: '얼마나 머무르세요?'},
+      {s: '본인', en: 'One week.', ko: '일주일이요.'},
+      {s: '직원', en: 'Where are you staying?', ko: '어디서 묵으세요?'},
+      {s: '본인', en: 'At the Hilton Hotel downtown.', ko: '시내 힐튼 호텔에서요.'},
+      {s: '직원', en: 'Enjoy your stay.', ko: '즐거운 여행 되세요.'}
+    ]
+  },
+  {
+    title: '병원·약국',
+    meta: '난이도 ★★★ · 응급',
+    lines: [
+      {s: 'A', en: 'I don\'t feel well.', ko: '몸이 안 좋아요.'},
+      {s: 'B', en: 'What\'s wrong?', ko: '어디가 아프세요?'},
+      {s: 'A', en: 'I have a headache and a fever.', ko: '머리가 아프고 열이 나요.'},
+      {s: 'B', en: 'How long have you had it?', ko: '얼마나 됐어요?'},
+      {s: 'A', en: 'Since yesterday.', ko: '어제부터요.'},
+      {s: 'B', en: 'Take this medicine twice a day.', ko: '이 약 하루 두 번 드세요.'}
+    ]
+  },
+  {
+    title: '전화 통화',
+    meta: '난이도 ★★★ · 비즈니스',
+    lines: [
+      {s: 'A', en: 'Hello, this is Minsu speaking.', ko: '여보세요, 민수입니다.'},
+      {s: 'B', en: 'Hi Minsu, this is Sarah. Do you have a minute?', ko: '안녕 민수, 사라야. 잠깐 시간 있어?'},
+      {s: 'A', en: 'Sure, what\'s up?', ko: '응, 무슨 일이야?'},
+      {s: 'B', en: 'Can we reschedule our meeting?', ko: '회의 시간 다시 잡을 수 있을까?'},
+      {s: 'A', en: 'No problem. What day works for you?', ko: '문제 없어. 무슨 요일이 좋아?'},
+      {s: 'B', en: 'How about Thursday at 3?', ko: '목요일 3시 어때?'},
+      {s: 'A', en: 'Thursday at 3 works. I\'ll send you a calendar invite.', ko: '목요일 3시 좋아. 일정 보낼게.'}
+    ]
+  }
+];
+
+const SCENARIOS = {
+  cafe: {
+    name: '카페 주문',
+    setting: 'You are at a busy coffee shop in New York. The barista is friendly but busy. Order coffee, decide hot/iced, pay, and say thanks.',
+    starter: { en: "Hi there! What can I get started for you today?", ko: "안녕하세요! 무엇을 드릴까요?" }
+  },
+  airport: {
+    name: '입국 심사',
+    setting: 'You are at the US immigration counter. The officer is formal and professional. They will ask about your visit purpose, duration, and accommodation.',
+    starter: { en: "Welcome to the United States. Passport, please. What\'s the purpose of your visit?", ko: "미국에 오신 것을 환영합니다. 여권 주세요. 방문 목적이 어떻게 되세요?" }
+  },
+  hotel: {
+    name: '호텔 체크인',
+    setting: 'You are checking into a hotel. The receptionist is welcoming. Confirm your reservation, ask about WiFi and breakfast.',
+    starter: { en: "Good evening! Welcome to our hotel. Are you checking in?", ko: "안녕하세요! 저희 호텔에 오신 것을 환영합니다. 체크인 하시나요?" }
+  },
+  restaurant: {
+    name: '식당 주문',
+    setting: 'You are at a restaurant. The waiter takes your order. Ask about menu, dietary restrictions, recommendations.',
+    starter: { en: "Hi! Have you been here before? Can I tell you about our specials?", ko: "안녕하세요! 여기 처음이세요? 오늘의 특별 메뉴 알려드릴까요?" }
+  },
+  shop: {
+    name: '쇼핑하기',
+    setting: 'You are in a clothing store looking for something. The salesperson approaches you. Ask about sizes, colors, prices, fitting room.',
+    starter: { en: "Hello! Is there anything I can help you find today?", ko: "안녕하세요! 찾으시는 거 있으세요?" }
+  },
+  directions: {
+    name: '길 묻기',
+    setting: 'You are lost in a foreign city looking for a famous museum. Stop a local to ask for directions. They will give you turn-by-turn.',
+    starter: { en: "You look a bit lost. Can I help you?", ko: "길을 잃으신 것 같네요. 도와드릴까요?" }
+  }
+};
+
+const ACHIEVEMENTS = [
+  {id: 'first_step', icon: '🌱', title: '첫걸음', desc: '첫 표현 마스터하기', check: s => s.mastered.length >= 1},
+  {id: 'pronunciation_5', icon: '🎤', title: '발음 연습생', desc: '발음 연습 5회', check: s => s.practiceCount >= 5},
+  {id: 'pronunciation_20', icon: '🎙️', title: '발음 마니아', desc: '발음 연습 20회', check: s => s.practiceCount >= 20},
+  {id: 'mastered_10', icon: '⭐', title: '표현 수집가', desc: '표현 10개 마스터', check: s => s.mastered.length >= 10},
+  {id: 'mastered_50', icon: '🌟', title: '하프 마스터', desc: '표현 50개 마스터', check: s => s.mastered.length >= 50},
+  {id: 'mastered_all', icon: '🏆', title: '100개 정복', desc: '모든 표현 마스터', check: s => s.mastered.length >= 100},
+  {id: 'chat_1', icon: '💬', title: 'Hello, World', desc: 'AI와 첫 대화', check: s => s.chatCount >= 1},
+  {id: 'chat_20', icon: '🗣️', title: '대화의 달인', desc: 'AI와 20회 대화', check: s => s.chatCount >= 20},
+  {id: 'quiz_50', icon: '🧠', title: '퀴즈왕', desc: '퀴즈 정답 50개', check: s => s.quizCorrect >= 50},
+  {id: 'streak_3', icon: '🔥', title: '3일 연속', desc: '3일 연속 학습', check: s => s.streak >= 3},
+  {id: 'streak_7', icon: '💎', title: '일주일 완주', desc: '7일 연속 학습', check: s => s.streak >= 7},
+  {id: 'streak_14', icon: '👑', title: '2주 챔피언', desc: '14일 연속 학습', check: s => s.streak >= 14}
+];
+
+// ============================================================
+// STATE
+// ============================================================
+const STORE_KEY = 'speakup_v2';
+let state = loadState();
+let activeCategory = '전체';
+let isRecording = false;
+let recognition = null;
+let currentPracticePhrase = null;
+
+// Training session state
+let trainSession = null;
+
+function loadState() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(STORE_KEY) || '{}');
+    return {
+      mastered: stored.mastered || [],
+      practiceCount: stored.practiceCount || 0,
+      chatCount: stored.chatCount || 0,
+      chatHistory: stored.chatHistory || [],
+      streak: stored.streak || 0,
+      lastVisit: stored.lastVisit || null,
+      practiceScores: stored.practiceScores || {},
+      quizCorrect: stored.quizCorrect || 0,
+      quizTotal: stored.quizTotal || 0,
+      visitDays: stored.visitDays || [],
+      dailyMission: stored.dailyMission || null,
+      missionProgress: stored.missionProgress || 0,
+      missionDate: stored.missionDate || null
+    };
+  } catch {
+    return {mastered: [], practiceCount: 0, chatCount: 0, chatHistory: [], streak: 0, lastVisit: null, practiceScores: {}, quizCorrect: 0, quizTotal: 0, visitDays: [], dailyMission: null, missionProgress: 0, missionDate: null};
+  }
+}
+function saveState() {
+  localStorage.setItem(STORE_KEY, JSON.stringify(state));
+}
+function updateStreak() {
+  const today = new Date().toDateString();
+  if (state.lastVisit === today) return;
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  state.streak = state.lastVisit === yesterday ? state.streak + 1 : 1;
+  state.lastVisit = today;
+  if (!state.visitDays.includes(today)) state.visitDays.push(today);
+  saveState();
+}
+
+// ============================================================
+// DAILY MISSION
+// ============================================================
+const MISSION_TEMPLATES = [
+  {id: 'master3', title: '오늘 표현 3개 마스터', desc: '아무 표현이나 3개 ☆ 누르기', target: 3, type: 'master', icon: '✨'},
+  {id: 'quiz10', title: '퀴즈 10문제 정답', desc: '훈련 탭에서 퀴즈 10개 맞추기', target: 10, type: 'quiz', icon: '🧠'},
+  {id: 'chat3', title: 'AI와 3번 대화', desc: 'Emma에게 영어 메시지 3개 보내기', target: 3, type: 'chat', icon: '💬'},
+  {id: 'practice5', title: '발음 5번 연습', desc: '🎤 따라 말하기 5회 도전', target: 5, type: 'practice', icon: '🎤'},
+  {id: 'dictation5', title: '받아쓰기 5문제', desc: '훈련 탭에서 받아쓰기 완료', target: 5, type: 'dictation', icon: '✏️'}
+];
+
+function getDailyMission() {
+  const today = new Date().toDateString();
+  if (state.missionDate !== today || !state.dailyMission) {
+    // pick deterministic mission based on date
+    const seed = new Date().getDate() + new Date().getMonth();
+    state.dailyMission = MISSION_TEMPLATES[seed % MISSION_TEMPLATES.length].id;
+    state.missionDate = today;
+    state.missionProgress = 0;
+    saveState();
+  }
+  return MISSION_TEMPLATES.find(m => m.id === state.dailyMission);
+}
+
+function trackMissionProgress(type, amount = 1) {
+  const mission = getDailyMission();
+  if (!mission || mission.type !== type) return;
+  if (state.missionProgress >= mission.target) return;
+  state.missionProgress = Math.min(mission.target, state.missionProgress + amount);
+  saveState();
+  if (state.missionProgress >= mission.target) {
+    setTimeout(() => {
+      showCompletion('🎯', '미션 완료!', `${mission.title}\n내일 새로운 미션이 기다려요!`);
+    }, 500);
+  }
+  renderHome();
+}
+
+function startDailyMission() {
+  const m = getDailyMission();
+  if (m.type === 'quiz') { switchView('train'); }
+  else if (m.type === 'chat') { switchView('chat'); }
+  else if (m.type === 'practice' || m.type === 'master') { switchView('phrases'); }
+  else if (m.type === 'dictation') { switchView('train'); }
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function switchView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  document.querySelector(`.tab[data-view="${name}"]`)?.classList.add('active');
+  window.scrollTo(0, 0);
+  if (name === 'phrases') renderPhrases();
+  if (name === 'progress') renderProgress();
+  if (name === 'home') renderHome();
+  if (name === 'train') exitTraining();
+}
+
+// ============================================================
+// SPEECH SYNTHESIS
+// ============================================================
+function speak(text, rate = 0.9) {
+  if (!('speechSynthesis' in window)) {
+    alert('이 브라우저는 음성 기능을 지원하지 않습니다.');
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'en-US';
+  utter.rate = rate;
+  utter.pitch = 1;
+  const voices = window.speechSynthesis.getVoices();
+  const enVoice = voices.find(v => v.lang === 'en-US' && (v.name.includes('Google') || v.name.includes('Samantha'))) 
+    || voices.find(v => v.lang.startsWith('en'));
+  if (enVoice) utter.voice = enVoice;
+  window.speechSynthesis.speak(utter);
+  return new Promise(resolve => {
+    utter.onend = resolve;
+    utter.onerror = resolve;
+  });
+}
+function speakSlow(text) { return speak(text, 0.6); }
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.onvoiceschanged = () => {};
+  window.speechSynthesis.getVoices();
+}
+
+// ============================================================
+// SPEECH RECOGNITION
+// ============================================================
+function initRecognition() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return null;
+  const rec = new SR();
+  rec.lang = 'en-US';
+  rec.interimResults = false;
+  rec.maxAlternatives = 3;
+  return rec;
+}
+
+function practicePronunciation(phraseId) {
+  const phrase = PHRASES.find(p => p.id === phraseId);
+  if (!phrase) return;
+  currentPracticePhrase = phrase;
+  
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    alert('이 브라우저는 음성 인식을 지원하지 않습니다.\n크롬 또는 사파리에서 사용해주세요.');
+    return;
+  }
+  
+  const btn = document.querySelector(`[data-rec-btn="${phraseId}"]`);
+  if (!btn) return;
+  
+  if (isRecording) {
+    if (recognition) recognition.stop();
+    return;
+  }
+  
+  recognition = initRecognition();
+  recognition.onstart = () => {
+    isRecording = true;
+    btn.classList.add('recording');
+    btn.innerHTML = '🔴 듣는 중...';
+  };
+  recognition.onresult = (event) => {
+    const result = event.results[0];
+    let bestScore = 0;
+    let bestTranscript = '';
+    for (let i = 0; i < result.length; i++) {
+      const transcript = result[i].transcript;
+      const score = calculateScore(phrase.en, transcript);
+      if (score > bestScore) {
+        bestScore = score;
+        bestTranscript = transcript;
+      }
+    }
+    showPronunciationResult(phrase, bestTranscript, bestScore);
+    state.practiceCount++;
+    state.practiceScores[phraseId] = Math.max(state.practiceScores[phraseId] || 0, bestScore);
+    trackMissionProgress('practice');
+    saveState();
+    renderPhrases();
+  };
+  recognition.onerror = (event) => {
+    isRecording = false;
+    btn.classList.remove('recording');
+    btn.innerHTML = '🎤 따라 말하기';
+    if (event.error === 'no-speech') alert('음성이 감지되지 않았어요. 다시 시도해주세요.');
+    else if (event.error === 'not-allowed') alert('마이크 권한을 허용해주세요.');
+  };
+  recognition.onend = () => {
+    isRecording = false;
+    btn.classList.remove('recording');
+    btn.innerHTML = '🎤 따라 말하기';
+  };
+  recognition.start();
+}
+
+function calculateScore(target, said) {
+  const normalize = (s) => s.toLowerCase().replace(/[^a-z\s]/g, '').trim().split(/\s+/);
+  const t = normalize(target);
+  const s = normalize(said);
+  if (t.length === 0) return 0;
+  let matched = 0;
+  let lastIdx = -1;
+  t.forEach(word => {
+    const idx = s.findIndex((w, i) => i > lastIdx && w === word);
+    if (idx > -1) {
+      matched++;
+      lastIdx = idx;
+    } else if (s.includes(word)) {
+      matched += 0.7;
+    }
+  });
+  const wordScore = (matched / t.length) * 100;
+  const lenRatio = Math.min(s.length, t.length) / Math.max(s.length, t.length);
+  return Math.round(wordScore * (0.7 + 0.3 * lenRatio));
+}
+
+function showPronunciationResult(phrase, transcript, score) {
+  const modal = document.getElementById('pronModal');
+  const content = document.getElementById('pronModalContent');
+  let emoji, msg, cls;
+  if (score >= 85) { emoji = '🎉'; msg = '훌륭해요!'; cls = 'high'; }
+  else if (score >= 65) { emoji = '👍'; msg = '잘 했어요!'; cls = 'mid'; }
+  else if (score >= 40) { emoji = '💪'; msg = '조금만 더!'; cls = 'mid'; }
+  else { emoji = '🌱'; msg = '다시 한 번 들어볼까요?'; cls = 'low'; }
+  
+  content.innerHTML = `
+    <div style="font-size: 56px; margin-bottom: 8px;">${emoji}</div>
+    <div class="display" style="font-size: 28px; margin-bottom: 16px;">${msg}</div>
+    <div class="score-badge ${cls}" style="font-size: 22px; padding: 8px 20px; margin-bottom: 20px;">${score}점</div>
+    <div style="background: var(--bg-soft); padding: 12px; border-radius: 12px; margin-bottom: 12px; text-align: left;">
+      <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">목표 문장</div>
+      <div style="font-family: 'Fraunces', serif; font-weight: 600;">${phrase.en}</div>
+    </div>
+    <div style="background: var(--bg-soft); padding: 12px; border-radius: 12px; text-align: left;">
+      <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">내가 말한 것</div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 14px;">"${transcript}"</div>
+    </div>
+  `;
+  modal.classList.add('active');
+}
+function closePronModal() { document.getElementById('pronModal').classList.remove('active'); }
+
+// ============================================================
+// HOME RENDER
+// ============================================================
+function renderHome() {
+  const masteredCount = state.mastered.length;
+  const percent = (masteredCount / 100) * 100;
+  document.getElementById('weekProgressFill').style.width = percent + '%';
+  document.getElementById('weekProgressText').textContent = `${masteredCount} / 100 표현 마스터`;
+  document.getElementById('streakCount').textContent = state.streak;
+  
+  let currentDay = DAYS.find(d => !d.phraseIds.every(id => state.mastered.includes(id)));
+  if (!currentDay) currentDay = DAYS[DAYS.length - 1];
+  document.getElementById('weekDay').textContent = `Day ${currentDay.day} / 14`;
+  document.getElementById('todaySubtitle').textContent = `Day ${currentDay.day} · ${currentDay.title}`;
+  
+  // Daily mission
+  const mission = getDailyMission();
+  document.getElementById('missionTitle').textContent = `${mission.icon} ${mission.title}`;
+  document.getElementById('missionDesc').textContent = `${state.missionProgress} / ${mission.target} · ${mission.desc}`;
+  document.getElementById('missionProgress').style.width = `${Math.min(100, (state.missionProgress / mission.target) * 100)}%`;
+  
+  const list = document.getElementById('dayList');
+  list.innerHTML = DAYS.map(d => {
+    const allDone = d.phraseIds.every(id => state.mastered.includes(id));
+    const isCurrent = d === currentDay && !allDone;
+    return `
+      <div class="day-card ${allDone ? 'completed' : ''} ${isCurrent ? 'current' : ''}" onclick="goToDay(${d.day})">
+        <div class="day-num">${d.day}</div>
+        <div class="day-info">
+          <div class="day-title">${d.title}</div>
+          <div class="day-desc">${d.desc}</div>
+        </div>
+        <div class="day-status">${allDone ? '✓' : isCurrent ? '▶' : '○'}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function goToDay(dayNum) {
+  const day = DAYS.find(d => d.day === dayNum);
+  if (!day) return;
+  const cat = PHRASES.find(p => p.id === day.phraseIds[0])?.cat;
+  if (cat) activeCategory = cat;
+  switchView('phrases');
+}
+
+// ============================================================
+// PHRASES RENDER
+// ============================================================
+function renderPhrases() {
+  const pills = document.getElementById('categoryPills');
+  pills.innerHTML = CATEGORIES.map(c => 
+    `<button class="pill ${c === activeCategory ? 'active' : ''}" onclick="setCategory('${c}')">${c}</button>`
+  ).join('');
+  
+  const filtered = activeCategory === '전체' ? PHRASES : PHRASES.filter(p => p.cat === activeCategory);
+  const list = document.getElementById('phraseList');
+  list.innerHTML = filtered.map(p => {
+    const mastered = state.mastered.includes(p.id);
+    const lastScore = state.practiceScores[p.id];
+    let scoreBadge = '';
+    if (lastScore !== undefined) {
+      const cls = lastScore >= 85 ? 'high' : lastScore >= 65 ? 'mid' : 'low';
+      scoreBadge = `<div class="score-badge ${cls}">최고 ${lastScore}점</div>`;
+    }
+    const safeEn = p.en.replace(/'/g, "\\'");
+    return `
+      <div class="phrase-card ${mastered ? 'mastered' : ''}">
+        <div class="phrase-num">#${String(p.id).padStart(3,'0')} · ${p.cat}</div>
+        <div class="phrase-eng">${p.en}</div>
+        <div class="phrase-kor">${p.ko}</div>
+        ${scoreBadge}
+        <div class="phrase-actions">
+          <button class="action-btn" onclick="speak('${safeEn}')">🔊 듣기</button>
+          <button class="action-btn" onclick="speakSlow('${safeEn}')">🐢 천천히</button>
+          <button class="action-btn primary" data-rec-btn="${p.id}" onclick="practicePronunciation(${p.id})">🎤 따라 말하기</button>
+          <button class="action-btn master ${mastered ? 'mastered' : ''}" onclick="toggleMaster(${p.id})">${mastered ? '✓ 마스터' : '☆ 마스터'}</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function setCategory(cat) {
+  activeCategory = cat;
+  renderPhrases();
+}
+
+function toggleMaster(id) {
+  const idx = state.mastered.indexOf(id);
+  if (idx === -1) {
+    state.mastered.push(id);
+    trackMissionProgress('master');
+  } else {
+    state.mastered.splice(idx, 1);
+  }
+  saveState();
+  renderPhrases();
+}
+
+// ============================================================
+// TRAINING MODES
+// ============================================================
+function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+function startTraining(mode) {
+  document.getElementById('trainHome').style.display = 'none';
+  document.getElementById('trainSession').style.display = 'block';
+  trainSession = {
+    mode: mode,
+    index: 0,
+    correct: 0,
+    questions: [],
+    selectedAnswer: null,
+    showAnswer: false
+  };
+  
+  if (mode === 'quiz' || mode === 'reverse') {
+    const phrases = shuffle(PHRASES).slice(0, 10);
+    trainSession.questions = phrases.map(p => {
+      const others = shuffle(PHRASES.filter(x => x.id !== p.id)).slice(0, 3);
+      const allOptions = shuffle([p, ...others]);
+      return { phrase: p, options: allOptions };
+    });
+  } else if (mode === 'dictation') {
+    trainSession.questions = shuffle(PHRASES).slice(0, 5);
+  } else if (mode === 'fillblank') {
+    // pick phrases with multi-word for fill-blank
+    const multiWord = PHRASES.filter(p => p.en.split(' ').length >= 4);
+    trainSession.questions = shuffle(multiWord).slice(0, 8).map(p => {
+      const words = p.en.split(' ');
+      // find a meaningful word (not first, not punctuation-only)
+      const candidates = words
+        .map((w, i) => ({w, i}))
+        .filter(({w, i}) => i > 0 && /[a-zA-Z]{3,}/.test(w));
+      const target = candidates[Math.floor(Math.random() * candidates.length)] || {w: words[1], i: 1};
+      // strip punctuation from target word for answer
+      const cleanWord = target.w.replace(/[^a-zA-Z']/g, '');
+      return { phrase: p, blankIndex: target.i, answer: cleanWord, originalWord: target.w };
+    });
+  } else if (mode === 'flashcard') {
+    trainSession.questions = shuffle(PHRASES);
+    trainSession.flipped = false;
+  } else if (mode === 'shadowing') {
+    trainSession.questions = shuffle(PHRASES).slice(0, 5);
+  }
+  
+  renderTraining();
+}
+
+function exitTraining() {
+  document.getElementById('trainHome').style.display = 'block';
+  document.getElementById('trainSession').style.display = 'none';
+  trainSession = null;
+  if (recognition) try { recognition.stop(); } catch{}
+}
+
+function renderTraining() {
+  const container = document.getElementById('trainSession');
+  if (!trainSession) return;
+  const { mode, index, questions, correct } = trainSession;
+  
+  if (index >= questions.length && mode !== 'flashcard') {
+    // Show completion
+    const total = questions.length;
+    const pct = Math.round((correct / total) * 100);
+    let emoji = '🎉';
+    if (pct < 50) emoji = '💪';
+    else if (pct < 80) emoji = '👍';
+    container.innerHTML = `
+      <div class="train-header">
+        <button class="train-back" onclick="exitTraining()">← 훈련 메뉴</button>
+      </div>
+      <div class="train-question" style="padding: 40px 24px;">
+        <div style="font-size: 64px; margin-bottom: 12px;">${emoji}</div>
+        <div class="display" style="font-size: 28px; margin-bottom: 8px;">훈련 완료!</div>
+        <div style="color: var(--text-soft); font-size: 16px; margin-bottom: 20px;">${correct} / ${total} 정답 · ${pct}%</div>
+        <button class="action-btn primary big wide" onclick="startTraining('${mode}')" style="margin-bottom: 8px;">🔄 다시 도전</button>
+        <button class="action-btn big wide" onclick="exitTraining()">📋 다른 훈련 보기</button>
+      </div>
+    `;
+    return;
+  }
+  
+  const q = questions[index];
+  const progressPct = mode === 'flashcard' ? 0 : ((index) / questions.length) * 100;
+  
+  let questionHTML = '';
+  
+  if (mode === 'quiz') {
+    // Show Korean, pick English
+    questionHTML = `
+      <div class="train-question">
+        <div class="train-prompt-label">한국어 → 영어</div>
+        <div class="train-prompt">${q.phrase.ko}</div>
+      </div>
+      <div class="train-options">
+        ${q.options.map((opt, i) => {
+          let cls = '';
+          if (trainSession.showAnswer) {
+            if (opt.id === q.phrase.id) cls = 'correct';
+            else if (i === trainSession.selectedAnswer && opt.id !== q.phrase.id) cls = 'wrong';
+          }
+          return `<button class="train-option ${cls}" ${trainSession.showAnswer ? 'disabled' : ''} onclick="answerQuiz(${i})">${opt.en}</button>`;
+        }).join('')}
+      </div>
+    `;
+  } else if (mode === 'reverse') {
+    questionHTML = `
+      <div class="train-question">
+        <div class="train-prompt-label">영어 → 한국어</div>
+        <div class="train-prompt">${q.phrase.en}</div>
+        <button class="action-btn" style="margin-top: 8px;" onclick="speak('${q.phrase.en.replace(/'/g,"\\'")}')">🔊 듣기</button>
+      </div>
+      <div class="train-options">
+        ${q.options.map((opt, i) => {
+          let cls = '';
+          if (trainSession.showAnswer) {
+            if (opt.id === q.phrase.id) cls = 'correct';
+            else if (i === trainSession.selectedAnswer && opt.id !== q.phrase.id) cls = 'wrong';
+          }
+          return `<button class="train-option ${cls}" ${trainSession.showAnswer ? 'disabled' : ''} onclick="answerQuiz(${i})">${opt.ko}</button>`;
+        }).join('')}
+      </div>
+    `;
+  } else if (mode === 'dictation') {
+    questionHTML = `
+      <div class="dictation-audio">
+        <div class="train-prompt-label">들리는 영어를 받아쓰세요</div>
+        <button class="play-btn" onclick="speak('${q.en.replace(/'/g,"\\'")}')">▶</button>
+        <div style="color: var(--text-soft); font-size: 13px; margin-bottom: 8px;">${q.ko}</div>
+        <div class="speed-controls">
+          <button class="action-btn" onclick="speak('${q.en.replace(/'/g,"\\'")}', 1.0)">🔊 보통</button>
+          <button class="action-btn" onclick="speak('${q.en.replace(/'/g,"\\'")}', 0.6)">🐢 천천히</button>
+        </div>
+      </div>
+      <input type="text" class="train-input" id="dictationInput" placeholder="들은 영어를 입력하세요..." autocomplete="off" autocorrect="off" autocapitalize="off">
+      ${trainSession.showAnswer ? `
+        <div class="train-feedback ${trainSession.lastCorrect ? 'correct' : 'wrong'}">
+          <div class="train-feedback-emoji">${trainSession.lastCorrect ? '🎉' : '💪'}</div>
+          <div class="train-feedback-msg">${trainSession.lastCorrect ? '정답!' : '정답 확인하기'}</div>
+          <div class="train-feedback-answer">${q.en}</div>
+        </div>
+        <button class="action-btn primary big wide" onclick="nextQuestion()">다음 →</button>
+      ` : `
+        <button class="action-btn primary big wide" onclick="answerDictation()">정답 확인</button>
+      `}
+    `;
+  } else if (mode === 'fillblank') {
+    const words = q.phrase.en.split(' ');
+    const display = words.map((w, i) => i === q.blankIndex ? '<span style="color: var(--accent); font-weight: 800;">_____</span>' : w).join(' ');
+    questionHTML = `
+      <div class="train-question">
+        <div class="train-prompt-label">빈칸에 들어갈 단어는?</div>
+        <div class="train-prompt">${display}</div>
+        <div class="train-hint">${q.phrase.ko}</div>
+        <button class="action-btn" style="margin-top: 12px;" onclick="speak('${q.phrase.en.replace(/'/g,"\\'")}')">🔊 듣기 (정답 포함)</button>
+      </div>
+      <input type="text" class="train-input" id="fillInput" placeholder="단어를 입력하세요..." autocomplete="off" autocorrect="off" autocapitalize="off">
+      ${trainSession.showAnswer ? `
+        <div class="train-feedback ${trainSession.lastCorrect ? 'correct' : 'wrong'}">
+          <div class="train-feedback-emoji">${trainSession.lastCorrect ? '🎉' : '💪'}</div>
+          <div class="train-feedback-msg">${trainSession.lastCorrect ? '정답!' : '아쉬워요'}</div>
+          <div class="train-feedback-answer">정답: <b>${q.answer}</b></div>
+        </div>
+        <button class="action-btn primary big wide" onclick="nextQuestion()">다음 →</button>
+      ` : `
+        <button class="action-btn primary big wide" onclick="answerFillBlank()">정답 확인</button>
+      `}
+    `;
+  } else if (mode === 'flashcard') {
+    const flipped = trainSession.flipped;
+    questionHTML = `
+      <div class="flashcard" onclick="flipFlashcard()">
+        <div class="flashcard-label">${flipped ? '한국어 뜻' : '영어 표현'}</div>
+        <div class="flashcard-text">${flipped ? q.ko : q.en}</div>
+        ${flipped ? `<div class="flashcard-sub">${q.en}</div>` : `<div class="flashcard-sub">${q.cat}</div>`}
+        <div class="flashcard-hint">탭해서 뒤집기</div>
+      </div>
+      <div class="flashcard-actions">
+        <button class="action-btn big" onclick="speak('${q.en.replace(/'/g,"\\'")}')">🔊 듣기</button>
+        <button class="action-btn primary big" onclick="nextFlashcard()">다음 카드 →</button>
+      </div>
+    `;
+  } else if (mode === 'shadowing') {
+    questionHTML = `
+      <div class="train-question">
+        <div class="train-prompt-label">들은 후 따라 말하세요</div>
+        <div class="train-prompt">${q.en}</div>
+        <div class="train-hint">${q.ko}</div>
+        <div class="speed-controls" style="margin-top: 16px;">
+          <button class="action-btn" onclick="speak('${q.en.replace(/'/g,"\\'")}')">🔊 듣기</button>
+          <button class="action-btn" onclick="speakSlow('${q.en.replace(/'/g,"\\'")}')">🐢 천천히</button>
+        </div>
+      </div>
+      ${trainSession.lastScore !== undefined ? `
+        <div class="train-feedback ${trainSession.lastScore >= 70 ? 'correct' : 'wrong'}">
+          <div class="train-feedback-emoji">${trainSession.lastScore >= 85 ? '🎉' : trainSession.lastScore >= 70 ? '👍' : '💪'}</div>
+          <div class="train-feedback-msg">${trainSession.lastScore}점</div>
+          <div class="train-feedback-answer">"${trainSession.lastTranscript}"</div>
+        </div>
+        <button class="action-btn primary big wide" onclick="nextQuestion()">다음 →</button>
+      ` : `
+        <button class="action-btn primary big wide" data-rec-shadow="1" onclick="shadowingRecord()">🎤 따라 말하기</button>
+      `}
+    `;
+  }
+  
+  container.innerHTML = `
+    <div class="train-header">
+      <button class="train-back" onclick="exitTraining()">← 메뉴</button>
+      <div class="train-progress-text">${mode === 'flashcard' ? `${index + 1}` : `${index + 1} / ${questions.length}`}</div>
+    </div>
+    <div class="train-bar"><div class="train-bar-fill" style="width: ${progressPct}%"></div></div>
+    ${questionHTML}
+  `;
+  
+  // Auto-focus input
+  if (mode === 'dictation' && !trainSession.showAnswer) {
+    setTimeout(() => document.getElementById('dictationInput')?.focus(), 100);
+    setTimeout(() => speak(q.en), 400);
+  }
+  if (mode === 'fillblank' && !trainSession.showAnswer) {
+    setTimeout(() => document.getElementById('fillInput')?.focus(), 100);
+  }
+  // Auto-play for shadowing
+  if (mode === 'shadowing' && trainSession.lastScore === undefined) {
+    setTimeout(() => speak(q.en), 400);
+  }
+}
+
+function answerQuiz(optionIdx) {
+  if (trainSession.showAnswer) return;
+  const q = trainSession.questions[trainSession.index];
+  trainSession.selectedAnswer = optionIdx;
+  trainSession.showAnswer = true;
+  const isCorrect = q.options[optionIdx].id === q.phrase.id;
+  if (isCorrect) {
+    trainSession.correct++;
+    state.quizCorrect++;
+    trackMissionProgress('quiz');
+  }
+  state.quizTotal++;
+  saveState();
+  renderTraining();
+  setTimeout(() => {
+    trainSession.index++;
+    trainSession.selectedAnswer = null;
+    trainSession.showAnswer = false;
+    renderTraining();
+  }, 1500);
+}
+
+function answerDictation() {
+  const input = document.getElementById('dictationInput');
+  const val = (input?.value || '').trim();
+  if (!val) return;
+  const q = trainSession.questions[trainSession.index];
+  const correct = normalizeForCompare(val) === normalizeForCompare(q.en);
+  trainSession.showAnswer = true;
+  trainSession.lastCorrect = correct;
+  if (correct) {
+    trainSession.correct++;
+    trackMissionProgress('dictation');
+  }
+  saveState();
+  renderTraining();
+}
+
+function answerFillBlank() {
+  const input = document.getElementById('fillInput');
+  const val = (input?.value || '').trim().toLowerCase();
+  if (!val) return;
+  const q = trainSession.questions[trainSession.index];
+  const correct = val === q.answer.toLowerCase();
+  trainSession.showAnswer = true;
+  trainSession.lastCorrect = correct;
+  if (correct) trainSession.correct++;
+  renderTraining();
+}
+
+function normalizeForCompare(s) {
+  return s.toLowerCase().replace(/[^a-z\s]/g, '').replace(/\s+/g, ' ').trim();
+}
+
+function nextQuestion() {
+  trainSession.index++;
+  trainSession.showAnswer = false;
+  trainSession.lastCorrect = undefined;
+  trainSession.lastScore = undefined;
+  trainSession.lastTranscript = undefined;
+  renderTraining();
+}
+
+function flipFlashcard() {
+  trainSession.flipped = !trainSession.flipped;
+  renderTraining();
+}
+
+function nextFlashcard() {
+  trainSession.index = (trainSession.index + 1) % trainSession.questions.length;
+  trainSession.flipped = false;
+  renderTraining();
+}
+
+function shadowingRecord() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { alert('이 브라우저는 음성 인식을 지원하지 않습니다.'); return; }
+  const q = trainSession.questions[trainSession.index];
+  const btn = document.querySelector('[data-rec-shadow="1"]');
+  if (!btn) return;
+  
+  if (isRecording) { if (recognition) recognition.stop(); return; }
+  
+  recognition = initRecognition();
+  recognition.onstart = () => {
+    isRecording = true;
+    btn.classList.add('recording');
+    btn.innerHTML = '🔴 듣는 중... (말씀하세요)';
+  };
+  recognition.onresult = (event) => {
+    const result = event.results[0];
+    let bestScore = 0, bestTranscript = '';
+    for (let i = 0; i < result.length; i++) {
+      const transcript = result[i].transcript;
+      const score = calculateScore(q.en, transcript);
+      if (score > bestScore) { bestScore = score; bestTranscript = transcript; }
+    }
+    trainSession.lastScore = bestScore;
+    trainSession.lastTranscript = bestTranscript;
+    if (bestScore >= 70) trainSession.correct++;
+    state.practiceCount++;
+    trackMissionProgress('practice');
+    saveState();
+    renderTraining();
+  };
+  recognition.onerror = () => {
+    isRecording = false;
+    if (btn) { btn.classList.remove('recording'); btn.innerHTML = '🎤 따라 말하기'; }
+  };
+  recognition.onend = () => {
+    isRecording = false;
+    if (btn) { btn.classList.remove('recording'); btn.innerHTML = '🎤 따라 말하기'; }
+  };
+  recognition.start();
+}
+
+// ============================================================
+// CHAT
+// ============================================================
+let currentScenario = null;
+
+function renderChat() {
+  const container = document.getElementById('chatMessages');
+  if (state.chatHistory.length === 0) {
+    container.innerHTML = `
+      <div class="msg ai">
+        <div>Hi! I'm Emma 😊 I'm your English conversation partner. Let's talk slowly, in simple English.</div>
+        <div class="msg-translation">안녕! 저는 에마예요. 영어 회화 파트너입니다. 천천히, 쉬운 영어로 얘기해봐요.</div>
+        <div class="msg-actions">
+          <button class="msg-mini-btn" onclick="speak('Hi! I am Emma. I am your English conversation partner. Let us talk slowly, in simple English.')">🔊 듣기</button>
+        </div>
+      </div>
+      <div class="msg ai">
+        <div>How are you today? You can answer in English. Try: "I'm good, thanks!"</div>
+        <div class="msg-translation">오늘 어때요? 영어로 답해보세요. 예: "I'm good, thanks!"</div>
+        <div class="msg-actions">
+          <button class="msg-mini-btn" onclick="speak('How are you today? You can answer in English. Try: I am good, thanks!')">🔊 듣기</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+  container.innerHTML = state.chatHistory.map(m => {
+    if (m.role === 'user') {
+      return `<div class="msg user"><div>${escapeHtml(m.content)}</div></div>`;
+    }
+    const enText = m.content;
+    const koText = m.translation || '';
+    return `
+      <div class="msg ai">
+        <div>${escapeHtml(enText)}</div>
+        ${koText ? `<div class="msg-translation">${escapeHtml(koText)}</div>` : ''}
+        <div class="msg-actions">
+          <button class="msg-mini-btn" onclick="speak(${JSON.stringify(enText).replace(/"/g,'&quot;')})">🔊 듣기</button>
+          <button class="msg-mini-btn" onclick="speakSlow(${JSON.stringify(enText).replace(/"/g,'&quot;')})">🐢 천천히</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+  container.scrollTop = container.scrollHeight;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function useTopic(text) {
+  document.getElementById('chatInput').value = text;
+  document.getElementById('chatInput').focus();
+}
+
+function startScenario(key) {
+  const sc = SCENARIOS[key];
+  if (!sc) return;
+  if (state.chatHistory.length > 0) {
+    if (!confirm(`현재 대화를 종료하고 [${sc.name}] 상황극을 시작할까요?`)) return;
+  }
+  currentScenario = key;
+  state.chatHistory = [
+    { role: 'assistant', content: sc.starter.en, translation: sc.starter.ko, scenario: key }
+  ];
+  saveState();
+  renderChat();
+  setTimeout(() => speak(sc.starter.en), 400);
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  
+  state.chatHistory.push({role: 'user', content: text});
+  state.chatCount++;
+  trackMissionProgress('chat');
+  saveState();
+  input.value = '';
+  input.style.height = 'auto';
+  renderChat();
+  
+  const container = document.getElementById('chatMessages');
+  const loadingDiv = document.createElement('div');
+  loadingDiv.className = 'msg ai';
+  loadingDiv.innerHTML = '<div class="msg-loading"><span></span><span></span><span></span></div>';
+  container.appendChild(loadingDiv);
+  container.scrollTop = container.scrollHeight;
+  
+  try {
+    const reply = await callClaudeAPI(state.chatHistory);
+    loadingDiv.remove();
+    state.chatHistory.push({role: 'assistant', content: reply.en, translation: reply.ko});
+    saveState();
+    renderChat();
+    setTimeout(() => speak(reply.en), 300);
+  } catch (err) {
+    loadingDiv.remove();
+    state.chatHistory.push({
+      role: 'assistant', 
+      content: "Sorry, I had a connection problem. Let's try again!", 
+      translation: '연결 문제가 있었어요. 다시 시도해봐요!'
+    });
+    saveState();
+    renderChat();
+  }
+}
+
+async function callClaudeAPI(history) {
+  // Detect if we're in a scenario
+  const firstAi = history.find(m => m.role === 'assistant');
+  const scenarioKey = firstAi?.scenario;
+  const sc = scenarioKey ? SCENARIOS[scenarioKey] : null;
+  
+  const baseSystem = `You are Emma, a warm and patient English conversation tutor for a Korean beginner learner.
+
+CRITICAL RULES:
+1. Use VERY simple English. Beginner level (A1-A2). Short sentences. Common words only.
+2. Keep responses SHORT: 1-3 sentences max.
+3. Always ask a simple follow-up question to keep the conversation going.
+4. If the user writes in Korean, gently encourage them in Korean to try English, but still help.
+5. If their English has a small mistake, don't correct directly. Just use the correct form in your reply naturally.
+6. Be very warm, encouraging, use emojis sparingly (1 per message max).
+7. Respond ONLY in this exact JSON format with no markdown, no code blocks, no extra text:
+{"en": "your English response", "ko": "한국어 번역"}`;
+  
+  const scenarioAdd = sc ? `\n\nSCENARIO MODE: You are role-playing a character in this situation:\n${sc.setting}\n\nStay IN CHARACTER. React as the character would. Push the scenario forward naturally toward completion (ordering done, check-in complete, etc). After 5-7 exchanges, wrap up naturally.` : '';
+  
+  const systemPrompt = baseSystem + scenarioAdd + `\n\nExample good response:\n{"en": "That sounds fun! What did you eat for lunch?", "ko": "재밌네요! 점심으로 뭐 먹었어요?"}`;
+
+  const messages = history.slice(-10).map(m => ({
+    role: m.role,
+    content: m.content
+  }));
+
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 300,
+      system: systemPrompt,
+      messages: messages
+    })
+  });
+  
+  if (!response.ok) throw new Error('API error');
+  const data = await response.json();
+  const textBlock = data.content.find(b => b.type === 'text');
+  const raw = textBlock?.text || '';
+  const cleaned = raw.replace(/```json|```/g, '').trim();
+  try {
+    const parsed = JSON.parse(cleaned);
+    return {en: parsed.en || cleaned, ko: parsed.ko || ''};
+  } catch {
+    return {en: cleaned, ko: ''};
+  }
+}
+
+function resetChat() {
+  if (!confirm('대화를 처음부터 다시 시작할까요?')) return;
+  state.chatHistory = [];
+  currentScenario = null;
+  saveState();
+  renderChat();
+}
+
+function toggleVoiceInput() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { alert('이 브라우저는 음성 입력을 지원하지 않습니다.'); return; }
+  const btn = document.getElementById('micBtn');
+  if (isRecording) { if (recognition) recognition.stop(); return; }
+  recognition = new SR();
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+  recognition.onstart = () => { isRecording = true; btn.classList.add('recording'); };
+  recognition.onresult = (e) => {
+    const text = e.results[0][0].transcript;
+    document.getElementById('chatInput').value = text;
+  };
+  recognition.onerror = () => { isRecording = false; btn.classList.remove('recording'); };
+  recognition.onend = () => { isRecording = false; btn.classList.remove('recording'); };
+  recognition.start();
+}
+
+// ============================================================
+// DIALOG MODAL
+// ============================================================
+function openDialogModal() {
+  const content = document.getElementById('dialogModalContent');
+  content.innerHTML = DIALOGS.map(d => `
+    <div class="dialog-item" style="border: none; padding: 0; margin-bottom: 24px;">
+      <div class="dialog-title">${d.title}</div>
+      <div class="dialog-meta">${d.meta}</div>
+      ${d.lines.map(l => `
+        <div class="dialog-line">
+          <div class="dialog-speaker">${l.s}:</div>
+          <div class="dialog-content">
+            <div class="dialog-eng">${l.en}</div>
+            <div class="dialog-kor">${l.ko}</div>
+          </div>
+          <button class="dialog-play" onclick="speak(${JSON.stringify(l.en).replace(/"/g,'&quot;')})">🔊</button>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+  document.getElementById('dialogModal').classList.add('active');
+}
+function closeDialogModal() { document.getElementById('dialogModal').classList.remove('active'); }
+
+// ============================================================
+// PROGRESS
+// ============================================================
+function renderProgress() {
+  document.getElementById('statStreak').textContent = state.streak;
+  document.getElementById('statMastered').textContent = state.mastered.length;
+  document.getElementById('statPractice').textContent = state.practiceCount;
+  document.getElementById('statChats').textContent = state.chatCount;
+  document.getElementById('statQuiz').textContent = state.quizCorrect;
+  document.getElementById('statDays').textContent = state.visitDays.length;
+  
+  const list = document.getElementById('achievementList');
+  list.innerHTML = ACHIEVEMENTS.map(a => {
+    const unlocked = a.check(state);
+    return `
+      <div class="achievement ${unlocked ? 'unlocked' : 'locked'}">
+        <div class="achievement-icon">${a.icon}</div>
+        <div style="flex: 1">
+          <div class="achievement-title">${a.title}</div>
+          <div class="achievement-desc">${a.desc}</div>
+        </div>
+        <div style="color: ${unlocked ? 'var(--success)' : 'var(--text-muted)'}">${unlocked ? '✓' : '🔒'}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function resetAllProgress() {
+  if (!confirm('정말로 모든 진도를 초기화할까요?\n표현 마스터, 발음 점수, 대화 기록이 모두 사라집니다.')) return;
+  localStorage.removeItem(STORE_KEY);
+  state = loadState();
+  renderHome();
+  renderProgress();
+  alert('초기화 완료!');
+}
+
+// ============================================================
+// COMPLETION MODAL
+// ============================================================
+function showCompletion(emoji, title, desc) {
+  document.getElementById('completionContent').innerHTML = `
+    <div class="completion-emoji">${emoji}</div>
+    <div class="completion-title">${title}</div>
+    <div style="color: var(--text-soft); white-space: pre-line;">${desc}</div>
+  `;
+  document.getElementById('completionModal').classList.add('active');
+}
+function closeCompletionModal() { document.getElementById('completionModal').classList.remove('active'); }
+
+// ============================================================
+// INPUT HANDLERS
+// ============================================================
+document.getElementById('chatInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+document.getElementById('chatInput').addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+});
+
+// Handle Enter for dictation/fillblank
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter') return;
+  if (e.target.id === 'dictationInput' && !trainSession?.showAnswer) {
+    answerDictation();
+  } else if (e.target.id === 'fillInput' && !trainSession?.showAnswer) {
+    answerFillBlank();
+  }
+});
+
+// ============================================================
+// INIT
+// ============================================================
+updateStreak();
+renderHome();
+renderChat();
+
+if ('speechSynthesis' in window) {
+  setTimeout(() => window.speechSynthesis.getVoices(), 100);
+}
+</script>
+
+</body>
+</html>
