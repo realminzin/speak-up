@@ -1144,46 +1144,18 @@ let currentPracticePhrase = null;
 // Training session state
 let trainSession = null;
 
-// Microphone stream reference (for explicit cleanup)
-let activeMicStream = null;
-
-// Helper: forcefully release the microphone
+// Helper: forcefully release the speech recognition and microphone
 function releaseMicrophone() {
-  try {
-    if (recognition) {
-      try { recognition.onresult = null; } catch(e){}
-      try { recognition.onerror = null; } catch(e){}
-      try { recognition.onend = null; } catch(e){}
-      try { recognition.abort(); } catch(e){}
-      try { recognition.stop(); } catch(e){}
-      recognition = null;
-    }
-  } catch(e) {}
-  try {
-    if (activeMicStream) {
-      activeMicStream.getTracks().forEach(track => {
-        try { track.stop(); } catch(e){}
-      });
-      activeMicStream = null;
-    }
-  } catch(e) {}
-  isRecording = false;
-}
-
-// Pre-acquire mic stream so we have an explicit handle to stop later
-async function acquireMicStream() {
-  try {
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      // release any previous stream first
-      if (activeMicStream) {
-        activeMicStream.getTracks().forEach(t => { try{t.stop();}catch(e){} });
-        activeMicStream = null;
-      }
-      activeMicStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    }
-  } catch(e) {
-    // permission denied or unsupported; recognition will still try
+  if (recognition) {
+    try { recognition.onresult = null; } catch(e){}
+    try { recognition.onerror = null; } catch(e){}
+    try { recognition.onend = null; } catch(e){}
+    try { recognition.onstart = null; } catch(e){}
+    try { recognition.abort(); } catch(e){}
+    try { recognition.stop(); } catch(e){}
+    recognition = null;
   }
+  isRecording = false;
 }
 
 function loadState() {
@@ -1345,56 +1317,53 @@ function practicePronunciation(phraseId) {
     return;
   }
   
-  acquireMicStream().finally(() => {
-    recognition = initRecognition();
-    if (!recognition) return;
-    
-    recognition.onstart = () => {
-      isRecording = true;
-      btn.classList.add('recording');
-      btn.innerHTML = '🔴 듣는 중...';
-    };
-    recognition.onresult = (event) => {
-      const result = event.results[0];
-      let bestScore = 0;
-      let bestTranscript = '';
-      for (let i = 0; i < result.length; i++) {
-        const transcript = result[i].transcript;
-        const score = calculateScore(phrase.en, transcript);
-        if (score > bestScore) {
-          bestScore = score;
-          bestTranscript = transcript;
-        }
+  recognition = initRecognition();
+  if (!recognition) return;
+  
+  recognition.onstart = () => {
+    isRecording = true;
+    btn.classList.add('recording');
+    btn.innerHTML = '🔴 듣는 중...';
+  };
+  recognition.onresult = (event) => {
+    const result = event.results[0];
+    let bestScore = 0;
+    let bestTranscript = '';
+    for (let i = 0; i < result.length; i++) {
+      const transcript = result[i].transcript;
+      const score = calculateScore(phrase.en, transcript);
+      if (score > bestScore) {
+        bestScore = score;
+        bestTranscript = transcript;
       }
-      showPronunciationResult(phrase, bestTranscript, bestScore);
-      state.practiceCount++;
-      state.practiceScores[phraseId] = Math.max(state.practiceScores[phraseId] || 0, bestScore);
-      trackMissionProgress('practice');
-      saveState();
-      renderPhrases();
-    };
-    recognition.onerror = (event) => {
-      releaseMicrophone();
-      btn.classList.remove('recording');
-      btn.innerHTML = '🎤 따라 말하기';
-      if (event.error === 'no-speech') alert('음성이 감지되지 않았어요. 다시 시도해주세요.');
-      else if (event.error === 'not-allowed') alert('마이크 권한을 허용해주세요.');
-    };
-    recognition.onend = () => {
-      // CRITICAL: explicitly release the mic when recognition ends
-      releaseMicrophone();
-      btn.classList.remove('recording');
-      btn.innerHTML = '🎤 따라 말하기';
-    };
-    
-    try {
-      recognition.start();
-    } catch(err) {
-      releaseMicrophone();
-      btn.classList.remove('recording');
-      btn.innerHTML = '🎤 따라 말하기';
     }
-  });
+    showPronunciationResult(phrase, bestTranscript, bestScore);
+    state.practiceCount++;
+    state.practiceScores[phraseId] = Math.max(state.practiceScores[phraseId] || 0, bestScore);
+    trackMissionProgress('practice');
+    saveState();
+    renderPhrases();
+  };
+  recognition.onerror = (event) => {
+    releaseMicrophone();
+    btn.classList.remove('recording');
+    btn.innerHTML = '🎤 따라 말하기';
+    if (event.error === 'no-speech') alert('음성이 감지되지 않았어요. 다시 시도해주세요.');
+    else if (event.error === 'not-allowed') alert('마이크 권한을 허용해주세요.');
+  };
+  recognition.onend = () => {
+    releaseMicrophone();
+    btn.classList.remove('recording');
+    btn.innerHTML = '🎤 따라 말하기';
+  };
+  
+  try {
+    recognition.start();
+  } catch(err) {
+    releaseMicrophone();
+    btn.classList.remove('recording');
+    btn.innerHTML = '🎤 따라 말하기';
+  }
 }
 
 function calculateScore(target, said) {
@@ -1419,6 +1388,20 @@ function calculateScore(target, said) {
 }
 
 function showPronunciationResult(phrase, transcript, score) {
+  // CRITICAL: force release the microphone the moment the result appears
+  releaseMicrophone();
+  // also clear any "recording" visual state across the app
+  document.querySelectorAll('.recording').forEach(el => {
+    el.classList.remove('recording');
+  });
+  // restore button texts that may still say "듣는 중..."
+  document.querySelectorAll('[data-rec-btn]').forEach(el => {
+    el.innerHTML = '🎤 따라 말하기';
+  });
+  document.querySelectorAll('[data-rec-shadow]').forEach(el => {
+    el.innerHTML = '🎤 따라 말하기';
+  });
+  
   const modal = document.getElementById('pronModal');
   const content = document.getElementById('pronModalContent');
   let emoji, msg, cls;
@@ -1863,50 +1846,53 @@ function shadowingRecord() {
     return;
   }
   
-  acquireMicStream().finally(() => {
-    recognition = initRecognition();
-    if (!recognition) return;
-    
-    recognition.onstart = () => {
-      isRecording = true;
-      btn.classList.add('recording');
-      btn.innerHTML = '🔴 듣는 중... (말씀하세요)';
-    };
-    recognition.onresult = (event) => {
-      const result = event.results[0];
-      let bestScore = 0, bestTranscript = '';
-      for (let i = 0; i < result.length; i++) {
-        const transcript = result[i].transcript;
-        const score = calculateScore(q.en, transcript);
-        if (score > bestScore) { bestScore = score; bestTranscript = transcript; }
-      }
-      trainSession.lastScore = bestScore;
-      trainSession.lastTranscript = bestTranscript;
-      if (bestScore >= 70) trainSession.correct++;
-      state.practiceCount++;
-      trackMissionProgress('practice');
-      saveState();
-      renderTraining();
-    };
-    recognition.onerror = () => {
-      releaseMicrophone();
-      const b = document.querySelector('[data-rec-shadow="1"]');
-      if (b) { b.classList.remove('recording'); b.innerHTML = '🎤 따라 말하기'; }
-    };
-    recognition.onend = () => {
-      releaseMicrophone();
-      const b = document.querySelector('[data-rec-shadow="1"]');
-      if (b) { b.classList.remove('recording'); b.innerHTML = '🎤 따라 말하기'; }
-    };
-    
-    try {
-      recognition.start();
-    } catch(err) {
-      releaseMicrophone();
-      const b = document.querySelector('[data-rec-shadow="1"]');
-      if (b) { b.classList.remove('recording'); b.innerHTML = '🎤 따라 말하기'; }
+  recognition = initRecognition();
+  if (!recognition) return;
+  
+  recognition.onstart = () => {
+    isRecording = true;
+    btn.classList.add('recording');
+    btn.innerHTML = '🔴 듣는 중... (말씀하세요)';
+  };
+  recognition.onresult = (event) => {
+    const result = event.results[0];
+    let bestScore = 0, bestTranscript = '';
+    for (let i = 0; i < result.length; i++) {
+      const transcript = result[i].transcript;
+      const score = calculateScore(q.en, transcript);
+      if (score > bestScore) { bestScore = score; bestTranscript = transcript; }
     }
-  });
+    // CRITICAL: release the mic immediately upon getting a result
+    releaseMicrophone();
+    const b = document.querySelector('[data-rec-shadow="1"]');
+    if (b) { b.classList.remove('recording'); b.innerHTML = '🎤 따라 말하기'; }
+    
+    trainSession.lastScore = bestScore;
+    trainSession.lastTranscript = bestTranscript;
+    if (bestScore >= 70) trainSession.correct++;
+    state.practiceCount++;
+    trackMissionProgress('practice');
+    saveState();
+    renderTraining();
+  };
+  recognition.onerror = () => {
+    releaseMicrophone();
+    const b = document.querySelector('[data-rec-shadow="1"]');
+    if (b) { b.classList.remove('recording'); b.innerHTML = '🎤 따라 말하기'; }
+  };
+  recognition.onend = () => {
+    releaseMicrophone();
+    const b = document.querySelector('[data-rec-shadow="1"]');
+    if (b) { b.classList.remove('recording'); b.innerHTML = '🎤 따라 말하기'; }
+  };
+  
+  try {
+    recognition.start();
+  } catch(err) {
+    releaseMicrophone();
+    const b = document.querySelector('[data-rec-shadow="1"]');
+    if (b) { b.classList.remove('recording'); b.innerHTML = '🎤 따라 말하기'; }
+  }
 }
 
 // ============================================================
@@ -2089,40 +2075,40 @@ function toggleVoiceInput() {
     return;
   }
   
-  // Acquire explicit mic stream first, then start recognition
-  acquireMicStream().finally(() => {
-    recognition = new SR();
-    recognition.lang = 'en-US';
-    recognition.interimResults = false;
-    recognition.continuous = false;
-    
-    recognition.onstart = () => {
-      isRecording = true;
-      btn.classList.add('recording');
-    };
-    recognition.onresult = (e) => {
-      try {
-        const text = e.results[0][0].transcript;
-        document.getElementById('chatInput').value = text;
-      } catch(err) {}
-    };
-    recognition.onerror = () => {
-      releaseMicrophone();
-      if (btn) { btn.classList.remove('recording'); btn.innerHTML = '🎤'; }
-    };
-    recognition.onend = () => {
-      // Explicitly release mic stream when recognition ends
-      releaseMicrophone();
-      if (btn) { btn.classList.remove('recording'); btn.innerHTML = '🎤'; }
-    };
-    
+  recognition = new SR();
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+  recognition.continuous = false;
+  recognition.maxAlternatives = 1;
+  
+  recognition.onstart = () => {
+    isRecording = true;
+    btn.classList.add('recording');
+  };
+  recognition.onresult = (e) => {
     try {
-      recognition.start();
-    } catch(err) {
-      releaseMicrophone();
-      if (btn) { btn.classList.remove('recording'); btn.innerHTML = '🎤'; }
-    }
-  });
+      const text = e.results[0][0].transcript;
+      document.getElementById('chatInput').value = text;
+    } catch(err) {}
+    // CRITICAL: release the mic immediately upon getting a result
+    releaseMicrophone();
+    if (btn) { btn.classList.remove('recording'); btn.innerHTML = '🎤'; }
+  };
+  recognition.onerror = () => {
+    releaseMicrophone();
+    if (btn) { btn.classList.remove('recording'); btn.innerHTML = '🎤'; }
+  };
+  recognition.onend = () => {
+    releaseMicrophone();
+    if (btn) { btn.classList.remove('recording'); btn.innerHTML = '🎤'; }
+  };
+  
+  try {
+    recognition.start();
+  } catch(err) {
+    releaseMicrophone();
+    if (btn) { btn.classList.remove('recording'); btn.innerHTML = '🎤'; }
+  }
 }
 
 // ============================================================
